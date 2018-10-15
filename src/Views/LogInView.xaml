@@ -1,0 +1,41 @@
+﻿<Window x:Class="AlarmClock.Views.LogInView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AlarmClock.Views"
+        xmlns:viewModels="clr-namespace:AlarmClock.ViewModels"
+        mc:Ignorable="d"
+        Title="Log In" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="6*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+        
+        <Label Content="Login or Email:" Grid.Row="1" Grid.Column="1"
+               FontSize="18" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="2" Margin="0, 12"
+                 FontSize="16" VerticalContentAlignment="Center" />
+
+        <Label Content="Password:" Grid.Row="3" Grid.Column="1"
+               FontSize="18" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <PasswordBox Grid.Row="3" Grid.Column="2" Margin="0, 12" 
+                     FontSize="16" VerticalContentAlignment="Center" />
+
+        <Button Content="Log In" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
+                FontSize="20" Margin="20, 10, 0, 10" Cursor="Hand" />
+    </Grid>
+</Window>
