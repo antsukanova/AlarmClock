@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Security;
 
 using AlarmClock.Annotations;
 using AlarmClock.Models;
@@ -12,7 +13,7 @@ namespace AlarmClock.ViewModels
         private List<User> CorrectUsers { get; }
 
         private string _emailOrLogin;
-        private string _password;
+        private SecureString _password;
 
         public string EmailOrLogin
         {
@@ -24,7 +25,7 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public string Password
+        public SecureString Password
         {
             get => _password;
             set
@@ -40,7 +41,7 @@ namespace AlarmClock.ViewModels
             {
                 new User {Email = "e@ma.il"  , Login = "MyLogin", Password = "12345"},
                 new User {Email = "my@ema.il", Login = "Login"  , Password = "54321"},
-                new User {Email = "mail@a.b" , Login = "Log In" , Password = "1111" }
+                new User {Email = "mail@a.b" , Login = "Log In" , Password = "11111"}
             };
         }
 

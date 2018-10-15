@@ -51,7 +51,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="src\Views\AlarmClock.xaml">
+    <ApplicationDefinition Include="src\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
@@ -65,9 +65,10 @@
     </Page>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="src\Models\User.cs" />
+    <Compile Include="src\RelayCommand.cs" />
     <Compile Include="src\ViewModels\LogInViewModel.cs" />
-    <Compile Include="src\Views\AlarmClock.xaml.cs">
-      <DependentUpon>AlarmClock.xaml</DependentUpon>
+    <Compile Include="src\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\Views\LogInView.xaml.cs">
