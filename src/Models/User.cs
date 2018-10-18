@@ -6,7 +6,7 @@ using AlarmClock.Annotations;
 
 namespace AlarmClock.Models
 {
-    class User : INotifyPropertyChanged
+    public class User : INotifyPropertyChanged
     {
         private string _id;
         private string _name;

@@ -8,7 +8,7 @@ using AlarmClock.Models;
 
 namespace AlarmClock.ViewModels
 {
-    class LogInViewModel : INotifyPropertyChanged
+    class SignInViewModel : INotifyPropertyChanged
     {
         private List<User> CorrectUsers { get; }
 
@@ -35,7 +35,7 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public LogInViewModel()
+        public SignInViewModel()
         {
             CorrectUsers = new List<User>
             {
