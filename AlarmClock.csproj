@@ -72,6 +72,11 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="src\Models\Clock.cs" />
+    <Compile Include="src\Repositories\IClockRepository.cs" />
+    <Compile Include="src\Repositories\IUserRepository.cs" />
+    <Compile Include="src\Repositories\ClockRepository.cs" />
+    <Compile Include="src\Repositories\UserRepository.cs" />
     <Compile Include="src\Managers\NavigationManager.cs" />
     <Compile Include="src\Misc\NavigationModel.cs" />
     <Compile Include="src\Models\User.cs" />

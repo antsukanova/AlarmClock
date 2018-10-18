@@ -16,6 +16,7 @@ namespace AlarmClock.Models
         private string _password;
         private DateTime _lastVisited;
 
+        #region properites
         public string Id
         {
             get => _id;
@@ -85,6 +86,7 @@ namespace AlarmClock.Models
                 OnPropertyChanged(nameof(LastVisited));
             }
         }
+        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
 
