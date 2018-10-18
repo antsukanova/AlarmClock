@@ -5,12 +5,12 @@ using AlarmClock.ViewModels;
 
 namespace AlarmClock.Views
 {
-    public partial class LogInView : UserControl
+    public partial class SignInView
     {
-        public LogInView()
+        public SignInView()
         {
             InitializeComponent();
-            DataContext = new LogInViewModel();
+            DataContext = new SignInViewModel();
         }
 
         private void PasswordChanged(object sender, RoutedEventArgs e)

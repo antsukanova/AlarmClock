@@ -1,8 +1,4 @@
-﻿using System.Windows;
-
-namespace AlarmClock
+﻿namespace AlarmClock
 {
-    public partial class AlarmClockApp : Application
-    {
-    }
+    public partial class AlarmClockApp {}
 }
