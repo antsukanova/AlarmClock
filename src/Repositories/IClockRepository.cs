@@ -15,6 +15,6 @@ namespace AlarmClock.Repositories
 
         Clock Update(Clock clock);
 
-        string Delete(string id);
+        Guid Delete(Guid id);
     }
 }

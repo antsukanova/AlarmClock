@@ -38,7 +38,7 @@ namespace AlarmClock.Repositories
             return clock;
         }
 
-        public string Delete(string id)
+        public Guid Delete(Guid id)
         {
             var curr = Clocks.Single(c => c.Id == id);
 
