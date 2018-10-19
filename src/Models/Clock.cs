@@ -8,12 +8,22 @@ namespace AlarmClock.Models
 {
     public class Clock : INotifyPropertyChanged
     {
-        public  Guid Id { get; }
+        private string _id;
         private DateTime _lastTriggered;
         private DateTime _nextTrigger;
         private User     _owner;
 
         #region properites
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                OnPropertyChanged(nameof(Id));
+            }
+        }
+
         public DateTime LastTriggered
         {
             get => _lastTriggered;
@@ -42,17 +52,6 @@ namespace AlarmClock.Models
                 _owner = value;
                 OnPropertyChanged(nameof(Owner));
             }
-        }
-        #endregion
-
-        #region constructor
-        public Clock(DateTime lastTriggered, DateTime nextTrigger, User owner)
-        {
-            Id = Guid.NewGuid();
-
-            LastTriggered = lastTriggered;
-            NextTrigger = nextTrigger;
-            Owner = owner;
         }
         #endregion
 

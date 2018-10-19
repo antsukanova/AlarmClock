@@ -1,27 +1,20 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
+using System.Security;
 
 using AlarmClock.Annotations;
-using AlarmClock.Managers;
-using AlarmClock.Misc;
 using AlarmClock.Models;
-using AlarmClock.Properties;
-using AlarmClock.Repositories;
 
 namespace AlarmClock.ViewModels
 {
     class SignInViewModel : INotifyPropertyChanged
     {
+        private List<User> CorrectUsers { get; }
+
         private string _emailOrLogin;
-        private string _password;
+        private SecureString _password;
 
-        private ICommand _signIn;
-        private ICommand _toSignUp;
-
-        #region properties
         public string EmailOrLogin
         {
             get => _emailOrLogin;
@@ -32,7 +25,7 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public string Password
+        public SecureString Password
         {
             get => _password;
             set
@@ -42,46 +35,15 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public ICommand SignIn => _signIn ?? (_signIn = new RelayCommand(SignInExecute, SignInCanExecute));
-
-        public ICommand ToSignUp => _toSignUp ?? (_toSignUp = new RelayCommand(ToSignUpExecute));
-        #endregion
-
-        private static void ToSignUpExecute(object obj) => NavigationManager.Navigate(Page.SignUp);
-
-        private void SignInExecute(object obj)
+        public SignInViewModel()
         {
-            User currentUser;
-
-            try
+            CorrectUsers = new List<User>
             {
-                currentUser = new UserRepository().Find(EmailOrLogin);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(string.Format(Resources.CantGetUserError));
-                return;
-            }
-
-            if (currentUser == null)
-            {
-                MessageBox.Show(string.Format(Resources.UserDoesntExistError, EmailOrLogin));
-                return;
-            }
-
-            if (!currentUser.IsPasswordCorrect(Password))
-            {
-                MessageBox.Show(Resources.WrongPasswordError);
-                return;
-            }
-
-            StationManager.CurrentUser = currentUser;
-
-            NavigationManager.Navigate(Page.Main);
+                new User {Email = "e@ma.il"  , Login = "MyLogin", Password = "12345"},
+                new User {Email = "my@ema.il", Login = "Login"  , Password = "54321"},
+                new User {Email = "mail@a.b" , Login = "Log In" , Password = "11111"}
+            };
         }
-
-        private bool SignInCanExecute(object obj) 
-            => !(string.IsNullOrWhiteSpace(EmailOrLogin) || string.IsNullOrWhiteSpace(Password));
 
         public event PropertyChangedEventHandler PropertyChanged;
 

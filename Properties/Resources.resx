@@ -117,20 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CantGetUserError" xml:space="preserve">
-    <value>Couldn't get user</value>
-    <comment>The message to display when request for a user failed for some reason.</comment>
-  </data>
   <data name="UnknownPageError" xml:space="preserve">
-    <value>Unknown page</value>
+    <value>"Unknown page"</value>
     <comment>The message to display, when can't resolve a requested page.</comment>
-  </data>
-  <data name="UserDoesntExistError" xml:space="preserve">
-    <value>User with email or login {0} doesn't exist</value>
-    <comment>The message to display when user with such credentials is not found.</comment>
-  </data>
-  <data name="WrongPasswordError" xml:space="preserve">
-    <value>Password is incorrect</value>
-    <comment>The message to display when entered password doesn't match the real one.</comment>
   </data>
 </root>

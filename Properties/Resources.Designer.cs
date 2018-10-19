@@ -61,38 +61,11 @@ namespace AlarmClock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Couldn&apos;t get user.
-        /// </summary>
-        internal static string CantGetUserError {
-            get {
-                return ResourceManager.GetString("CantGetUserError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown page.
+        ///   Looks up a localized string similar to &quot;Unknown page&quot;.
         /// </summary>
         internal static string UnknownPageError {
             get {
                 return ResourceManager.GetString("UnknownPageError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User with email or login {0} doesn&apos;t exist.
-        /// </summary>
-        internal static string UserDoesntExistError {
-            get {
-                return ResourceManager.GetString("UserDoesntExistError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Password is incorrect.
-        /// </summary>
-        internal static string WrongPasswordError {
-            get {
-                return ResourceManager.GetString("WrongPasswordError", resourceCulture);
             }
         }
     }

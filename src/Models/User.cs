@@ -3,41 +3,30 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 using AlarmClock.Annotations;
-using AlarmClock.Misc;
 
 namespace AlarmClock.Models
 {
     public class User : INotifyPropertyChanged
     {
-        public  Guid Id { get; }
+        private string _id;
         private string _name;
         private string _surname;
         private string _login;
         private string _email;
-        public  string Password { get; }
-        public  string Salt { get; }
+        private string _password;
         private DateTime _lastVisited;
 
-        #region constructor
-        public User(
-            string name, string surname, string login, string email, string password,
-            DateTime lastVisited
-        )
-        {
-            Id = Guid.NewGuid();
-
-            Name = name;
-            Surname = surname;
-            Login = login;
-            Email = email;
-
-            (Password, Salt) = Encrypter.Encode(password);
-
-            LastVisited = lastVisited;
-        }
-        #endregion
-
         #region properites
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                OnPropertyChanged(nameof(Id));
+            }
+        }
+
         public string Name
         {
             get => _name;
@@ -78,6 +67,16 @@ namespace AlarmClock.Models
             }
         }
 
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                _password = value;
+                OnPropertyChanged(nameof(Password));
+            }
+        }
+
         public DateTime LastVisited
         {
             get => _lastVisited;
@@ -88,8 +87,6 @@ namespace AlarmClock.Models
             }
         }
         #endregion
-
-        public bool IsPasswordCorrect(string password) => Encrypter.Hash(password + Salt).Equals(Password);
 
         public event PropertyChangedEventHandler PropertyChanged;
 

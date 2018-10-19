@@ -14,17 +14,10 @@
         <Style TargetType="TextBox">
             <Setter Property="Margin"   Value="10, 12" />
             <Setter Property="FontSize" Value="16" />
-            <Setter Property="MinWidth" Value="300" />
         </Style>
         <Style TargetType="PasswordBox">
             <Setter Property="Margin"   Value="10, 12" />
             <Setter Property="FontSize" Value="16" />
-            <Setter Property="MinWidth" Value="300" />
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="Margin"   Value="10" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Cursor"   Value="Hand" />
         </Style>
     </UserControl.Resources>
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
@@ -36,27 +29,20 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
         <Label Content="Email or Login:" Grid.Column="0" Grid.Row="0" />
-        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
+        <TextBox Grid.Row="0" Grid.Column="1"
                  VerticalContentAlignment="Center"
                  Text="{Binding EmailOrLogin, UpdateSourceTrigger=PropertyChanged}" />
 
         <Label Content="Password:" Grid.Column="0" Grid.Row="1" />
-        <PasswordBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+        <PasswordBox Grid.Row="1" Grid.Column="1"
                      VerticalContentAlignment="Center"
                      PasswordChanged="PasswordChanged" />
 
-        <Button Content="Sign In"
-                Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" 
-                Command="{Binding SignIn}" />
-        <Button Content="To Sign Up" 
-                Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2"
-                Command="{Binding ToSignUp}"
-                />
+        <Button Content="Sign In" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"
+                FontSize="20" Margin="10" Cursor="Hand" />
     </Grid>
 </UserControl>
