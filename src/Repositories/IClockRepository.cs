@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using AlarmClock.Models;
 
@@ -8,7 +9,7 @@ namespace AlarmClock.Repositories
     {
         bool Exists(Clock clock);
 
-        List<Clock> ForUser(string id);
+        List<Clock> ForUser(Guid id);
 
         Clock Add(Clock clock);
 
