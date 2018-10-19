@@ -72,6 +72,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="src\Managers\StationManager.cs" />
+    <Compile Include="src\Misc\Encrypter.cs" />
     <Compile Include="src\Models\Clock.cs" />
     <Compile Include="src\Repositories\IClockRepository.cs" />
     <Compile Include="src\Repositories\IUserRepository.cs" />
