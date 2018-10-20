@@ -48,11 +48,12 @@ namespace AlarmClock.ViewModels
 
         private void SignInExecute(object obj)
         {
-            User currentUser;
+            User user;
+            var userRepo = new UserRepository();
 
             try
             {
-                currentUser = new UserRepository().Find(EmailOrLogin);
+                user = userRepo.Find(EmailOrLogin);
             }
             catch (Exception)
             {
@@ -60,19 +61,21 @@ namespace AlarmClock.ViewModels
                 return;
             }
 
-            if (currentUser == null)
+            if (user == null)
             {
                 MessageBox.Show(string.Format(Resources.UserDoesntExistError, EmailOrLogin));
                 return;
             }
 
-            if (!currentUser.IsPasswordCorrect(Password))
+            if (!user.IsPasswordCorrect(Password))
             {
                 MessageBox.Show(Resources.WrongPasswordError);
                 return;
             }
 
-            StationManager.CurrentUser = currentUser;
+            userRepo.UpdateLastVisited(user);
+
+            StationManager.CurrentUser = user;
 
             NavigationManager.Navigate(Page.Main);
         }

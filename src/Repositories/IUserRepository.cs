@@ -9,5 +9,7 @@ namespace AlarmClock.Repositories
         bool Exists(User user);
 
         User Add(User user);
+
+        User UpdateLastVisited(User user);
     }
 }
