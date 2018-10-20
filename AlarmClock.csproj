@@ -83,6 +83,7 @@
     <Compile Include="src\Misc\NavigationModel.cs" />
     <Compile Include="src\Models\User.cs" />
     <Compile Include="src\Misc\RelayCommand.cs" />
+    <Compile Include="src\ViewModels\SignUpViewModel.cs" />
     <Compile Include="src\ViewModels\SignInViewModel.cs" />
     <Compile Include="src\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
