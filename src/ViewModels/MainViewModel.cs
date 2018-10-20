@@ -2,6 +2,8 @@
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Windows.Threading;
+
+using AlarmClock.Managers;
 using AlarmClock.Misc;
 
 namespace AlarmClock.ViewModels
@@ -18,6 +20,7 @@ namespace AlarmClock.ViewModels
         private ICommand _clickDownHour;
         private ICommand _clickUpMinute;
         private ICommand _clickDownMinute;
+        private ICommand _signOut;
 
         #region properties
         public string TextTime
@@ -74,13 +77,16 @@ namespace AlarmClock.ViewModels
                delegate { SpinChange(ref _textMinute, nameof(TextMinute), 1, 59); }
            ));
 
-        public ICommand ClickDownMinute => 
+        public ICommand ClickDownMinute =>
             _clickDownMinute ?? 
            (_clickDownMinute = new RelayCommand(
                 delegate { SpinChange(ref _textMinute, nameof(TextMinute), -1, 59); }
            ));
+
+        public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
         #endregion
 
+        #region command functions
         private void SpinChange(ref string v, string obj, int offset, int highBound)
         {
             var newValue = int.Parse(v) + offset;
@@ -89,8 +95,16 @@ namespace AlarmClock.ViewModels
 
             OnPropertyChanged(obj);
         }
-              
-        private static bool IsValidTime(string text, int param) 
+
+        private static void SignOutExecute(object obj)
+        {
+            StationManager.CurrentUser = null;
+
+            NavigationManager.Navigate(Page.SignIn);
+        }
+        #endregion
+
+            private static bool IsValidTime(string text, int param) 
             => !Regex.IsMatch(text) && text.Length == 2 &&
                int.Parse(text) >= 0 && int.Parse(text) <= param;
 
