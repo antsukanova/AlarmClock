@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 using AlarmClock.Managers;
 using AlarmClock.Misc;
+using AlarmClock.Models;
+using AlarmClock.Properties;
 
 namespace AlarmClock.ViewModels
 {
     class MainViewModel : NotifyPropertyChanged
     {
+        #region attributes
         private static readonly Regex Regex = new Regex("[^0-9.-]+");
 
-        private string _textTime;
+        private string _currentTime;
+
         private string _textHour = "00";
         private string _textMinute = "00";
 
@@ -20,16 +25,19 @@ namespace AlarmClock.ViewModels
         private ICommand _clickDownHour;
         private ICommand _clickUpMinute;
         private ICommand _clickDownMinute;
+
         private ICommand _signOut;
+        private ICommand _addAlarmClock;
+        #endregion
 
         #region properties
-        public string TextTime
+        public string CurrentTime
         {
-            get => _textTime;
+            get => _currentTime;
             set
             {
-                _textTime = value;
-                OnPropertyChanged(nameof(TextTime));
+                _currentTime = value;
+                OnPropertyChanged(nameof(CurrentTime));
             }
         }
 
@@ -59,6 +67,7 @@ namespace AlarmClock.ViewModels
             }
         }
 
+        #region commands
         public ICommand ClickUpHour =>
             _clickUpHour ??
            (_clickUpHour = new RelayCommand(
@@ -84,6 +93,11 @@ namespace AlarmClock.ViewModels
            ));
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
+
+        public ICommand AddAlarmClock => 
+            _addAlarmClock ?? 
+           (_addAlarmClock = new RelayCommand(AddAlarmClockExecute));
+        #endregion
         #endregion
 
         #region command functions
@@ -102,9 +116,38 @@ namespace AlarmClock.ViewModels
 
             NavigationManager.Navigate(Page.SignIn);
         }
+
+        private static void AddAlarmClockExecute(object obj)
+        {
+            try
+            {
+                // create new clock for user (use GetNewClockTime)
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(Resources.CantParseTimeError);
+                return;
+            }
+
+            // validate time
+            // if not correct -> say it
+            // add clock to 'db' via ClockRepository
+            // reload clocks list OR just add created clock to it
+        }
         #endregion
 
-            private static bool IsValidTime(string text, int param) 
+        private DateTime GetNewClockTime()
+        {
+            // Ok if throws
+            var hour = int.Parse(_textHour);
+            var minute = int.Parse(_textMinute);
+
+            var tmpDate = DateTime.Now.AddDays(1);
+
+            return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
+        }
+
+        private static bool IsValidTime(string text, int param) 
             => !Regex.IsMatch(text) && text.Length == 2 &&
                int.Parse(text) >= 0 && int.Parse(text) <= param;
 
@@ -120,6 +163,6 @@ namespace AlarmClock.ViewModels
         }
 
         private void Timer_Tick(object sender, EventArgs e) =>
-            TextTime = DateTime.Now.ToString("H:mm:ss");
+            CurrentTime = DateTime.Now.ToString("H:mm:ss");
     }
 }

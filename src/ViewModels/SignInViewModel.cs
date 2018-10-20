@@ -57,7 +57,7 @@ namespace AlarmClock.ViewModels
             }
             catch (Exception)
             {
-                MessageBox.Show(string.Format(Resources.CantGetUserError));
+                MessageBox.Show(Resources.CantGetUserError);
                 return;
             }
 

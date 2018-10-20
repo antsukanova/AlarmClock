@@ -70,6 +70,15 @@ namespace AlarmClock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Chosen time can&apos;t be parsed.
+        /// </summary>
+        internal static string CantParseTimeError {
+            get {
+                return ResourceManager.GetString("CantParseTimeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email {0} is invalid.
         /// </summary>
         internal static string InvalidEmailError {
