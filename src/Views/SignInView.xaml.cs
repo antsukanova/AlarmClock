@@ -10,13 +10,14 @@ namespace AlarmClock.Views
         public SignInView()
         {
             InitializeComponent();
+
             DataContext = new SignInViewModel();
         }
 
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
-                ((dynamic)DataContext).Password = ((PasswordBox)sender).SecurePassword;
+                ((dynamic)DataContext).Password = ((PasswordBox)sender).Password;
         }
     }
 }
