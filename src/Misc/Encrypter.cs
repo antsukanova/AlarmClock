@@ -8,14 +8,14 @@ namespace AlarmClock.Misc
     {
         private const int SaltSize = 16;
 
-        public static (string hash, string salt) Encode(string password)
+        public static HashObject Encode(string password)
         {
             var saltBytes = new byte[SaltSize];
             new RNGCryptoServiceProvider().GetBytes(saltBytes);
 
             var salt = Hash(saltBytes);
 
-            return (Hash(salt + password), salt);
+            return new HashObject(Hash(salt + password), salt);
         }
 
         private static string Hash(byte[] bytes)
@@ -26,5 +26,17 @@ namespace AlarmClock.Misc
         }
 
         public static string Hash(string text) => Hash(Encoding.Default.GetBytes(text));
+    }
+
+    public class HashObject
+    {
+        public string Hash { get; }
+        public string Salt { get; }
+
+        public HashObject(string hash, string salt)
+        {
+            Hash = hash;
+            Salt = salt;
+        }
     }
 }

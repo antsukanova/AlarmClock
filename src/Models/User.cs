@@ -31,7 +31,10 @@ namespace AlarmClock.Models
             Login = login;
             Email = email;
 
-            (Password, Salt) = Encrypter.Encode(password);
+            var hashObj = Encrypter.Encode(password);
+
+            Password = hashObj.Hash;
+            Salt     = hashObj.Salt;
 
             LastVisited = lastVisited;
         }
