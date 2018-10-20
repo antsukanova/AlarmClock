@@ -4,17 +4,72 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Height="600" Width="800">
+        Height="600" Width="800" >
     <UserControl.Resources>
-
+        <SolidColorBrush x:Key="BackgroundBrush" Color="White"/>
+        <Style x:Key="ToolButton" TargetType="Control">
+            <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BackgroundBrush}"/>
+        </Style>
     </UserControl.Resources>
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+    <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="85*"/>
+            <RowDefinition Height="467*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="170"/>
         </Grid.ColumnDefinitions>
-
-        <Label Content="TODO: Main view" />
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Text="{Binding TextTime, UpdateSourceTrigger=PropertyChanged}" FontSize="24"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+            <Image Source="/AlarmClock;component/resources/btns/man-user.png" Height="32"/>
+            <Label Content="User" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+            <Button Style="{StaticResource ToolButton}" ToolTip="Sign Out" Margin="20,0,0,0">
+                <Image Source="/AlarmClock;component/resources/btns/logout.png" Height="32"/>
+            </Button>
+        </StackPanel>
+            
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"
+                        Text="{Binding TextHour, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler" />
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                        <Button Command="{Binding ClickUpHour}" Content="˄" Height="32" Width="20" VerticalContentAlignment="Center" />
+                        <Button Command="{Binding ClickDownHour}" Content="˅" Height="32" Width="20" VerticalContentAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+                <Label Content=":" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"
+                             Text="{Binding TextMinute, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler"/>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                        <Button Command="{Binding ClickUpMinute}" Content="˄" Height="32" Width="20" VerticalContentAlignment="Center" />
+                        <Button Command="{Binding ClickDownMinute}" Content="˅" Height="32" Width="20" VerticalContentAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="20,0,0,0" VerticalAlignment="Center">
+                    <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Add alarm">
+                        <Image Source="/AlarmClock;component/resources/btns/add.png" Height="24"/>
+                    </Button>
+                    <!--<Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Ring alarm" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                        <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24"/>
+                    </Button>
+                    <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Delete alarm" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                        <Image Source="/AlarmClock;component/resources/btns/delete.png" Height="24"/>
+                    </Button>-->
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
