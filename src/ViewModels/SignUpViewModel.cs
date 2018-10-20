@@ -1,30 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-
-using AlarmClock.Annotations;
-using AlarmClock.Managers;
-using AlarmClock.Misc;
-using AlarmClock.Models;
-using AlarmClock.Properties;
-using AlarmClock.Repositories;
+﻿using AlarmClock.Misc;
 
 namespace AlarmClock.ViewModels
 {
-    class SignUpViewModel : INotifyPropertyChanged
+    class SignUpViewModel : NotifyPropertyChanged
     {
         #region properties
         
         #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

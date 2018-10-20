@@ -1,12 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-using AlarmClock.Annotations;
+using AlarmClock.Misc;
 
 namespace AlarmClock.Models
 {
-    public class Clock : INotifyPropertyChanged
+    public class Clock : NotifyPropertyChanged
     {
         public  Guid Id { get; }
         private DateTime _lastTriggered;
@@ -55,13 +52,5 @@ namespace AlarmClock.Models
             Owner = owner;
         }
         #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

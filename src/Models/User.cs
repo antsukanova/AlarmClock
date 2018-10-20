@@ -1,13 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-using AlarmClock.Annotations;
 using AlarmClock.Misc;
 
 namespace AlarmClock.Models
 {
-    public class User : INotifyPropertyChanged
+    public class User : NotifyPropertyChanged
     {
         public  Guid Id { get; }
         private string _name;
@@ -90,13 +86,5 @@ namespace AlarmClock.Models
         #endregion
 
         public bool IsPasswordCorrect(string password) => Encrypter.Hash(password + Salt).Equals(Password);
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }
