@@ -11,16 +11,18 @@ namespace AlarmClock.ViewModels
 {
     class MainViewModel : INotifyPropertyChanged
     {
-        private readonly Regex _regex = new Regex("[^0-9.-]+");
+        private static readonly Regex Regex = new Regex("[^0-9.-]+");
 
         private string _textTime;
         private string _textHour = "00";
         private string _textMinute = "00";
+
         private ICommand _clickUpHour;
         private ICommand _clickDownHour;
         private ICommand _clickUpMinute;
         private ICommand _clickDownMinute;
 
+        #region properties
         public string TextTime
         {
             get => _textTime;
@@ -57,32 +59,51 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public ICommand ClickUpHour => _clickUpHour ?? (_clickUpHour = new RelayCommand(delegate { SpinChange(ref _textHour, nameof(TextHour), 1, 23); }));
-        public ICommand ClickDownHour => _clickDownHour ?? (_clickDownHour = new RelayCommand(delegate { SpinChange(ref _textHour, nameof(TextHour), -1, 23); }));
+        public ICommand ClickUpHour =>
+            _clickUpHour ??
+           (_clickUpHour = new RelayCommand(
+                delegate { SpinChange(ref _textHour, nameof(TextHour), 1, 23); }
+            ));
 
-        public ICommand ClickUpMinute => _clickUpMinute ?? (_clickUpMinute = new RelayCommand(delegate { SpinChange(ref _textMinute, nameof(TextMinute), 1, 59); }));
-        public ICommand ClickDownMinute => _clickDownMinute ?? (_clickDownMinute = new RelayCommand(delegate { SpinChange(ref _textMinute, nameof(TextMinute), -1, 59); }));
+        public ICommand ClickDownHour => 
+            _clickDownHour ?? 
+           (_clickDownHour = new RelayCommand(
+                delegate { SpinChange(ref _textHour, nameof(TextHour), -1, 23); }
+           ));
+
+        public ICommand ClickUpMinute => 
+            _clickUpMinute ?? 
+           (_clickUpMinute = new RelayCommand(
+               delegate { SpinChange(ref _textMinute, nameof(TextMinute), 1, 59); }
+           ));
+
+        public ICommand ClickDownMinute => 
+            _clickDownMinute ?? 
+           (_clickDownMinute = new RelayCommand(
+                delegate { SpinChange(ref _textMinute, nameof(TextMinute), -1, 59); }
+           ));
+        #endregion
 
         private void SpinChange(ref string v, string obj, int offset, int highBound)
         {
-            var newValue = Int32.Parse(v) + offset;
+            var newValue = int.Parse(v) + offset;
+
             v = $"{(newValue == -1 ? highBound : newValue == highBound + 1 ? 0 : newValue):00}";
+
             OnPropertyChanged(obj);
         }
-
               
-        private bool IsValidTime(string text, int param) => !_regex.IsMatch(text) && text.Length == 2 && 
-            Int32.Parse(text) >= 0 && Int32.Parse(text) <= param;
+        private static bool IsValidTime(string text, int param) 
+            => !Regex.IsMatch(text) && text.Length == 2 &&
+               int.Parse(text) >= 0 && int.Parse(text) <= param;
 
-        public MainViewModel()
-        {
-            SetTimer();
-        }
+        public MainViewModel() => SetTimer();
 
         private void SetTimer()
         {
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Tick += new EventHandler(Timer_Tick);
+            var timer = new DispatcherTimer();
+
+            timer.Tick += Timer_Tick;
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Start();
         }

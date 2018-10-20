@@ -29,7 +29,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
             <Image Source="/AlarmClock;component/resources/btns/man-user.png" Height="32"/>
             <Label Content="User" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
-            <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource ToolButton}" ToolTip="Ivanov" Margin="20,0,0,0">
+            <Button Style="{StaticResource ToolButton}" ToolTip="Sign Out" Margin="20,0,0,0">
                 <Image Source="/AlarmClock;component/resources/btns/logout.png" Height="32"/>
             </Button>
         </StackPanel>

@@ -1,5 +1,5 @@
 ﻿using AlarmClock.ViewModels;
-using System;
+
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -13,18 +13,20 @@ namespace AlarmClock.Views
             DataContext = new MainViewModel();
         }
 
-        private void KeyDownHandler(object sender, System.Windows.Input.KeyEventArgs e)
+        private void KeyDownHandler(object sender, KeyEventArgs e)
         {
-            int myCaretIndex = ((TextBox)sender).CaretIndex;
-            char[] characters = ((TextBox)sender).Text.ToCharArray();
+            var myCaretIndex = ((TextBox)sender).CaretIndex;
+            var characters   = ((TextBox)sender).Text.ToCharArray();
 
-            if (myCaretIndex < characters.Length)
-            {
-                characters[myCaretIndex] = (Char)KeyInterop.VirtualKeyFromKey(e.Key);
-                ((TextBox)sender).Text = string.Join("", characters);
-                ((TextBox)sender).CaretIndex = myCaretIndex + 1;
-                e.Handled = true;
-            }
+            if (myCaretIndex >= characters.Length)
+                return;
+
+            characters[myCaretIndex] = (char)KeyInterop.VirtualKeyFromKey(e.Key);
+
+            ((TextBox)sender).Text = string.Join("", characters);
+            ((TextBox)sender).CaretIndex = myCaretIndex + 1;
+
+            e.Handled = true;
         }
     }
 }
