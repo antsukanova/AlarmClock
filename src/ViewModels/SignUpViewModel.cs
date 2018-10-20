@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
 
@@ -81,31 +82,23 @@ namespace AlarmClock.ViewModels
 
         private void SignUpExecute(object obj)
         {
-            User currentUser = null;
+            var userRepo = new UserRepository();
+            var user = new User(Name, Surname, Login, Email, Password, DateTime.Now);
 
-            /*try
+            if (!new EmailAddressAttribute().IsValid(Email))
             {
-                currentUser = new UserRepository().Find(EmailOrLogin);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(string.Format(Resources.CantGetUserError));
+                MessageBox.Show(string.Format(Resources.InvalidEmailError, Email));
                 return;
             }
 
-            if (currentUser == null)
+            if (userRepo.Exists(user))
             {
-                MessageBox.Show(string.Format(Resources.UserDoesntExistError, EmailOrLogin));
+                MessageBox.Show(string.Format(Resources.UserAlreadyExistsError, Email, Login));
                 return;
             }
 
-            if (!currentUser.IsPasswordCorrect(Password))
-            {
-                MessageBox.Show(Resources.WrongPasswordError);
-                return;
-            }*/
-
-            StationManager.CurrentUser = currentUser;
+            userRepo.Add(user);
+            StationManager.CurrentUser = user;
 
             NavigationManager.Navigate(Page.Main);
         }

@@ -70,11 +70,29 @@ namespace AlarmClock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email {0} is invalid.
+        /// </summary>
+        internal static string InvalidEmailError {
+            get {
+                return ResourceManager.GetString("InvalidEmailError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown page.
         /// </summary>
         internal static string UnknownPageError {
             get {
                 return ResourceManager.GetString("UnknownPageError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User with email {0} or login {1} already exists.
+        /// </summary>
+        internal static string UserAlreadyExistsError {
+            get {
+                return ResourceManager.GetString("UserAlreadyExistsError", resourceCulture);
             }
         }
         
