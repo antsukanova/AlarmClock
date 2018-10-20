@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AlarmClock.Models;
 
@@ -21,6 +22,13 @@ namespace AlarmClock.Repositories
         public User Add(User user)
         {
             Users.Add(user);
+
+            return user;
+        }
+
+        public User UpdateLastVisited(User user)
+        {
+            Users.First(u => u.Id == user.Id).LastVisited = user.LastVisited = DateTime.Now;
 
             return user;
         }

@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
+using AlarmClock.ViewModels;
+
 namespace AlarmClock.Views
 {
     public partial class SignUpView
@@ -8,13 +10,13 @@ namespace AlarmClock.Views
         public SignUpView()
         {
             InitializeComponent();
-            //DataContext = new LogInViewModel();
+            DataContext = new SignUpViewModel();
         }
 
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
-                ((dynamic)DataContext).Password = ((PasswordBox)sender).SecurePassword;
+                ((dynamic)DataContext).Password = ((PasswordBox)sender).Password;
         }
     }
 }

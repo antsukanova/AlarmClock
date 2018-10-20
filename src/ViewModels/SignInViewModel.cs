@@ -1,10 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
-using AlarmClock.Annotations;
 using AlarmClock.Managers;
 using AlarmClock.Misc;
 using AlarmClock.Models;
@@ -13,7 +10,7 @@ using AlarmClock.Repositories;
 
 namespace AlarmClock.ViewModels
 {
-    class SignInViewModel : INotifyPropertyChanged
+    class SignInViewModel : NotifyPropertyChanged
     {
         private string _emailOrLogin;
         private string _password;
@@ -51,11 +48,12 @@ namespace AlarmClock.ViewModels
 
         private void SignInExecute(object obj)
         {
-            User currentUser;
+            User user;
+            var userRepo = new UserRepository();
 
             try
             {
-                currentUser = new UserRepository().Find(EmailOrLogin);
+                user = userRepo.Find(EmailOrLogin);
             }
             catch (Exception)
             {
@@ -63,32 +61,26 @@ namespace AlarmClock.ViewModels
                 return;
             }
 
-            if (currentUser == null)
+            if (user == null)
             {
                 MessageBox.Show(string.Format(Resources.UserDoesntExistError, EmailOrLogin));
                 return;
             }
 
-            if (!currentUser.IsPasswordCorrect(Password))
+            if (!user.IsPasswordCorrect(Password))
             {
                 MessageBox.Show(Resources.WrongPasswordError);
                 return;
             }
 
-            StationManager.CurrentUser = currentUser;
+            userRepo.UpdateLastVisited(user);
+
+            StationManager.CurrentUser = user;
 
             NavigationManager.Navigate(Page.Main);
         }
 
         private bool SignInCanExecute(object obj) 
             => !(string.IsNullOrWhiteSpace(EmailOrLogin) || string.IsNullOrWhiteSpace(Password));
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

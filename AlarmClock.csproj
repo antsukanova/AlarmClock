@@ -40,6 +40,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,6 +79,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="src\Managers\StationManager.cs" />
     <Compile Include="src\Misc\Encrypter.cs" />
+    <Compile Include="src\Misc\NotifyPropertyChanged.cs" />
     <Compile Include="src\Models\Clock.cs" />
     <Compile Include="src\Repositories\IClockRepository.cs" />
     <Compile Include="src\Repositories\IUserRepository.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="src\Misc\NavigationModel.cs" />
     <Compile Include="src\Models\User.cs" />
     <Compile Include="src\Misc\RelayCommand.cs" />
+    <Compile Include="src\ViewModels\SignUpViewModel.cs" />
     <Compile Include="src\ViewModels\MainViewModel.cs" />
     <Compile Include="src\ViewModels\SignInViewModel.cs" />
     <Compile Include="src\App.xaml.cs">

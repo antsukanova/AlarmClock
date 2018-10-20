@@ -1,15 +1,12 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Windows.Threading;
-using AlarmClock.Annotations;
 using AlarmClock.Misc;
 
 namespace AlarmClock.ViewModels
 {
-    class MainViewModel : INotifyPropertyChanged
+    class MainViewModel : NotifyPropertyChanged
     {
         private static readonly Regex Regex = new Regex("[^0-9.-]+");
 
@@ -110,13 +107,5 @@ namespace AlarmClock.ViewModels
 
         private void Timer_Tick(object sender, EventArgs e) =>
             TextTime = DateTime.Now.ToString("H:mm:ss");
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }
