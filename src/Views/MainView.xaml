@@ -69,7 +69,8 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="20,0,0,0" VerticalAlignment="Center">
-                    <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" ToolTip="Add alarm">
+                    <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                            ToolTip="Add alarm clock" Command="{Binding AddAlarmClock}">
                         <Image Source="/AlarmClock;component/resources/btns/add.png" Height="24"/>
                     </Button>
                     <!--<Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Ring alarm" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
