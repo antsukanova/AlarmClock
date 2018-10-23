@@ -16,7 +16,7 @@ namespace AlarmClock
             InitializeComponent();
 
             NavigationManager.Initialize(new NavigationModel(this))
-                             .Navigate(Page.SignIn);
+                             .Navigate(Page.Main);//SignIn);
         }
     }
 }

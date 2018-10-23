@@ -15,43 +15,16 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Cursor" Value="Hand" />
         </Style>
-    </UserControl.Resources>
-    <Grid Background="{StaticResource BackgroundBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
-            <RowDefinition Height="85*"/>
-            <RowDefinition Height="467*"/>
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="170"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="170"/>
-        </Grid.ColumnDefinitions>
-
-        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
-                   Text="{Binding TextTime, UpdateSourceTrigger=PropertyChanged}" FontSize="24"/>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
-            <Image Source="/AlarmClock;component/resources/btns/man-user.png" Height="32"/>
-            <Label Content="User" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
-
-            <Button Style="{StaticResource ToolButton}" ToolTip="Sign Out" 
-                    Margin="20,0,0,0" Command="{Binding SignOut}">
-                <Image Source="/AlarmClock;component/resources/btns/signout.png" Height="32"/>
-            </Button>
-        </StackPanel>
-            
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="20"/>
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Style TargetType="TextBox">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+        <ControlTemplate x:Key="AlarmClockTemplate" TargetType="ContentControl">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"
-                        Text="{Binding TextHour, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler" />
+                    <TextBox Text="{Binding TextHour, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
                         <Button Command="{Binding ClickUpHour}" Content="˄" Height="32" Width="20" />
                         <Button Command="{Binding ClickDownHour}" Content="˅" Height="32" Width="20" />
@@ -59,9 +32,9 @@
                 </StackPanel>
 
                 <Label Content=":" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"
-                             Text="{Binding TextMinute, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler"/>
+                    <TextBox Text="{Binding TextMinute, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler"/>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
                         <Button Command="{Binding ClickUpMinute}" Content="˄" Height="32" Width="20" />
                         <Button Command="{Binding ClickDownMinute}" Content="˅" Height="32" Width="20" />
@@ -81,6 +54,42 @@
                     </Button>-->
                 </StackPanel>
             </StackPanel>
-        </Grid>
+        </ControlTemplate>
+    </UserControl.Resources>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="85*"/>
+            <RowDefinition Height="467*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="170"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Text="{Binding CurrentTime, UpdateSourceTrigger=PropertyChanged}" FontSize="24"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+            <Image Source="/AlarmClock;component/resources/btns/man-user.png" Height="32"/>
+            <Label Content="User" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+
+            <Button Style="{StaticResource ToolButton}" ToolTip="Sign Out" 
+                    Margin="20,0,0,0" Command="{Binding SignOut}">
+                <Image Source="/AlarmClock;component/resources/btns/signout.png" Height="32"/>
+            </Button>
+        </StackPanel>
+            
+        <StackPanel Grid.Row="1" Grid.Column="1" Background="AliceBlue" Orientation="Vertical" Margin="0, 10, 0, 0">
+            <ContentControl Grid.Row="0" Grid.Column="1" Template="{StaticResource AlarmClockTemplate}"/>
+            <ListBox ItemsSource="{Binding Wallets}" SelectedItem="{Binding SelectedWallet}" Height="Auto" Margin="25">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Grid.Row="0" Grid.Column="1" Template="{StaticResource AlarmClockTemplate}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
     </Grid>
 </UserControl>

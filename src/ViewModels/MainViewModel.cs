@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -20,7 +21,7 @@ namespace AlarmClock.ViewModels
 
         private string _textHour = "00";
         private string _textMinute = "00";
-
+        private Clock _selectedClock;
         private ICommand _clickUpHour;
         private ICommand _clickDownHour;
         private ICommand _clickUpMinute;
@@ -110,18 +111,22 @@ namespace AlarmClock.ViewModels
             OnPropertyChanged(obj);
         }
 
-        private static void SignOutExecute(object obj)
+        private void SignOutExecute(object obj)
         {
             StationManager.CurrentUser = null;
 
             NavigationManager.Navigate(Page.SignIn);
         }
 
-        private static void AddAlarmClockExecute(object obj)
+        private void AddAlarmClockExecute(object obj)
         {
             try
             {
                 // create new clock for user (use GetNewClockTime)
+                DateTime dt = GetNewClockTime();
+                
+                _textHour = dt.Hour.ToString();
+                _textMinute = dt.Minute.ToString();
             }
             catch (Exception)
             {
@@ -136,6 +141,19 @@ namespace AlarmClock.ViewModels
         }
         #endregion
 
+        #region List of AlarmClocks
+        public ObservableCollection<Clock> Clocks { get; }
+        public Clock SelectedClock
+        {
+            get => _selectedClock;
+            set
+            {
+                _selectedClock = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
         private DateTime GetNewClockTime()
         {
             // Ok if throws
@@ -147,7 +165,7 @@ namespace AlarmClock.ViewModels
             return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
         }
 
-        private static bool IsValidTime(string text, int param) 
+        private bool IsValidTime(string text, int param) 
             => !Regex.IsMatch(text) && text.Length == 2 &&
                int.Parse(text) >= 0 && int.Parse(text) <= param;
 
