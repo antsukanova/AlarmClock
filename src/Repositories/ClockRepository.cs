@@ -4,6 +4,12 @@ using System.Linq;
 
 using AlarmClock.Models;
 
+//TODO
+//finish validation hours and minutes in alarm clocks
+//realization save/cancel(using Init value)
+//Scroll alarms
+//Add Clocks 
+
 namespace AlarmClock.Repositories
 {
     public class ClockRepository : IClockRepository
