@@ -1,9 +1,7 @@
-﻿using System;
-using System.Reflection;
+﻿using AlarmClock.Properties;
 
-using AlarmClock.Models;
-using AlarmClock.Properties;
-using AlarmClock.Repositories;
+using System;
+using System.Reflection;
 
 using FluentAssertions;
 
@@ -12,8 +10,8 @@ using TestStack.White.UIItems.WindowItems;
 
 using Xunit;
 
-using Button = TestStack.White.UIItems.Button;
-using Label = TestStack.White.UIItems.Label;
+using Button  = TestStack.White.UIItems.Button;
+using Label   = TestStack.White.UIItems.Label;
 using TextBox = TestStack.White.UIItems.TextBox;
 
 namespace AlarmClock.tests
@@ -48,7 +46,7 @@ namespace AlarmClock.tests
         }
 
         [Fact]
-        public void FailSignIn()
+        public void UserDoesntExist()
         {
             EnterCredentials();
 
@@ -64,7 +62,7 @@ namespace AlarmClock.tests
             CloseMessageBox();
         }
 
-        [Fact]
+        //[Fact]
         public void SuccessSignIn()
         {
             // TODO
@@ -81,7 +79,6 @@ namespace AlarmClock.tests
         private static void CloseMessageBox() => Window.MessageBox("")?.Close();
 
         private const string Login = "Login";
-        private const string Password = "Password";
 
         private static Button SignIn => Window.Get<Button>("SignIn");
         #endregion
