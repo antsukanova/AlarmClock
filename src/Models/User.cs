@@ -88,6 +88,6 @@ namespace AlarmClock.Models
         }
         #endregion
 
-        public bool IsPasswordCorrect(string password) => Encrypter.Hash(password + Salt).Equals(Password);
+        public bool IsPasswordCorrect(string password) => Encrypter.Hash(Salt + password).Equals(Password);
     }
 }
