@@ -80,6 +80,7 @@
     <Compile Include="src\Managers\StationManager.cs" />
     <Compile Include="src\Misc\Encrypter.cs" />
     <Compile Include="src\Misc\NotifyPropertyChanged.cs" />
+    <Compile Include="src\Models\AlarmItem.cs" />
     <Compile Include="src\Models\Clock.cs" />
     <Compile Include="src\Repositories\IClockRepository.cs" />
     <Compile Include="src\Repositories\IUserRepository.cs" />
@@ -153,6 +154,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\btns\bell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\btns\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\btns\undo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

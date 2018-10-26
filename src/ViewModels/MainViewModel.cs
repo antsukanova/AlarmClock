@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -16,22 +17,15 @@ namespace AlarmClock.ViewModels
     {
         #region attributes
         private static readonly Regex Regex = new Regex("[^0-9.-]+");
-
+        private readonly AlarmItem currentAlarmItem;
         private string _currentTime;
 
-        private string _textHour = "00";
-        private string _textMinute = "00";
         private Clock _selectedClock;
-        private ICommand _clickUpHour;
-        private ICommand _clickDownHour;
-        private ICommand _clickUpMinute;
-        private ICommand _clickDownMinute;
 
         private ICommand _signOut;
-        private ICommand _addAlarmClock;
         #endregion
 
-        #region properties
+//        #region properties
         public string CurrentTime
         {
             get => _currentTime;
@@ -42,108 +36,18 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public string TextHour
-        {
-            get => _textHour;
-            set
-            {
-                if (IsValidTime(value, 23))
-                {
-                    _textHour = value;
-                    OnPropertyChanged(nameof(TextHour));
-                }
-            }
-        }
+        public string Hour = "11";// currentAlarmItem.Hour;
+//        public string Minute { get => $"{_minute:00}"; }
 
-        public string TextMinute
-        {
-            get => _textMinute;
-            set
-            {
-                if (IsValidTime(value, 59))
-                {
-                    _textMinute = value;
-                    OnPropertyChanged(nameof(TextMinute));
-                }
-            }
-        }
+        //#region commands
 
-        #region commands
-        public ICommand ClickUpHour =>
-            _clickUpHour ??
-           (_clickUpHour = new RelayCommand(
-                delegate { SpinChange(ref _textHour, nameof(TextHour), 1, 23); }
-            ));
+        //public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
 
-        public ICommand ClickDownHour => 
-            _clickDownHour ?? 
-           (_clickDownHour = new RelayCommand(
-                delegate { SpinChange(ref _textHour, nameof(TextHour), -1, 23); }
-           ));
-
-        public ICommand ClickUpMinute => 
-            _clickUpMinute ?? 
-           (_clickUpMinute = new RelayCommand(
-               delegate { SpinChange(ref _textMinute, nameof(TextMinute), 1, 59); }
-           ));
-
-        public ICommand ClickDownMinute =>
-            _clickDownMinute ?? 
-           (_clickDownMinute = new RelayCommand(
-                delegate { SpinChange(ref _textMinute, nameof(TextMinute), -1, 59); }
-           ));
-
-        public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
-
-        public ICommand AddAlarmClock => 
-            _addAlarmClock ?? 
-           (_addAlarmClock = new RelayCommand(AddAlarmClockExecute));
-        #endregion
-        #endregion
-
-        #region command functions
-        private void SpinChange(ref string v, string obj, int offset, int highBound)
-        {
-            var newValue = int.Parse(v) + offset;
-
-            v = $"{(newValue == -1 ? highBound : newValue == highBound + 1 ? 0 : newValue):00}";
-
-            OnPropertyChanged(obj);
-        }
-
-        private void SignOutExecute(object obj)
-        {
-            StationManager.CurrentUser = null;
-
-            NavigationManager.Navigate(Page.SignIn);
-        }
-
-        private void AddAlarmClockExecute(object obj)
-        {
-            try
-            {
-                // create new clock for user (use GetNewClockTime)
-                DateTime dt = GetNewClockTime();
-                
-                _textHour = dt.Hour.ToString();
-                _textMinute = dt.Minute.ToString();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(Resources.CantParseTimeError);
-                return;
-            }
-
-            // validate time
-            // if not correct -> say it
-            // add clock to 'db' via ClockRepository
-            // reload clocks list OR just add created clock to it
-        }
-        #endregion
+//        #endregion
 
         #region List of AlarmClocks
-        public ObservableCollection<Clock> Clocks { get; }
-        public Clock SelectedClock
+        public ObservableCollection<AlarmItem> Clocks { get; }
+/*        public Clock SelectedClock
         {
             get => _selectedClock;
             set
@@ -152,24 +56,45 @@ namespace AlarmClock.ViewModels
                 OnPropertyChanged();
             }
         }
+*/
+        #endregion
+
+        #region command functions
+        private void SignOutExecute(object obj)
+        {
+            StationManager.CurrentUser = null;
+
+            NavigationManager.Navigate(Page.SignIn);
+        }
+
         #endregion
 
         private DateTime GetNewClockTime()
         {
             // Ok if throws
-            var hour = int.Parse(_textHour);
-            var minute = int.Parse(_textMinute);
+          //  var hour = int.Parse(_hour);
+          //  var minute = int.Parse(_minute);
 
             var tmpDate = DateTime.Now.AddDays(1);
 
-            return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
+            return new DateTime();//new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
         }
 
-        private bool IsValidTime(string text, int param) 
-            => !Regex.IsMatch(text) && text.Length == 2 &&
-               int.Parse(text) >= 0 && int.Parse(text) <= param;
 
-        public MainViewModel() => SetTimer();
+        public MainViewModel()
+        {
+            DateTime dt = DateTime.Now;
+            Clocks = new ObservableCollection<AlarmItem>();
+
+            SetTimer();
+//            var clock = new Clock(dt, dt, StationManager.CurrentUser);
+            Clocks.Add(new AlarmItem(Clocks, dt.Hour, dt.Minute));// clock);
+                                                     //                OnPropertyChanged(nameof(Clocks));
+
+            //            currentAlarmItem = new AlarmItem(null, dt.Hour, dt.Minute);
+            //            _hour = dt.Hour;
+            //            _minute = dt.Minute;
+        }
 
         private void SetTimer()
         {

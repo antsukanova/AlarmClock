@@ -6,7 +6,15 @@
         mc:Ignorable="d"
         Height="600" Width="800">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <SolidColorBrush x:Key="BackgroundBrush" Color="White"/>
+        <Style x:Key="ImageEnabled" TargetType="Image">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.25"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="ToolButton" TargetType="Control">
             <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource BackgroundBrush}"/>
@@ -22,45 +30,65 @@
             <Setter Property="FontSize" Value="24" />
         </Style>
         <ControlTemplate x:Key="AlarmClockTemplate" TargetType="ContentControl">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding TextHour, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler" />
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
-                        <Button Command="{Binding ClickUpHour}" Content="˄" Height="32" Width="20" />
-                        <Button Command="{Binding ClickDownHour}" Content="˅" Height="32" Width="20" />
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Text="{Binding Hour, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler" />
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                            <Button Command="{Binding ClickUpHour}" Content="˄" Height="32" Width="20" />
+                            <Button Command="{Binding ClickDownHour}" Content="˅" Height="32" Width="20" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-
-                <Label Content=":" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding TextMinute, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler"/>
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
-                        <Button Command="{Binding ClickUpMinute}" Content="˄" Height="32" Width="20" />
-                        <Button Command="{Binding ClickDownMinute}" Content="˅" Height="32" Width="20" />
+                    <Label Content=":" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Text="{Binding Minute, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler"/>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                            <Button Command="{Binding ClickUpMinute}" Content="˄" Height="32" Width="20" />
+                            <Button Command="{Binding ClickDownMinute}" Content="˅" Height="32" Width="20" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical" Margin="20,0,0,0" VerticalAlignment="Center">
-                    <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
-                            ToolTip="Add alarm clock" Command="{Binding AddAlarmClock}">
-                        <Image Source="/AlarmClock;component/resources/btns/add.png" Height="24"/>
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center" Width="120">
+                        <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                            ToolTip="Add alarm clock" Command="{Binding AddAlarm}"
+                            Visibility="{Binding Path=IsAddEnabled, Converter={StaticResource BoolToVisibility}}"
+                            IsEnabled="{Binding Path=IsAllowedTime}">
+                            <Image Source="/AlarmClock;component/resources/btns/add.png" Height="24" Style="{StaticResource ImageEnabled}"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                            ToolTip="Save alarm clock" Command="{Binding SaveAlarm}"
+                            Visibility="{Binding Path=IsSaveEnabled, Converter={StaticResource BoolToVisibility}}"
+                            IsEnabled="{Binding Path=IsAllowedTime}">
+                            <Image Source="/AlarmClock;component/resources/btns/save.png" Height="24" Style="{StaticResource ImageEnabled}"/>
+                        </Button>
+                        <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                            ToolTip="Cancel changes" Command="{Binding CancelAlarm}"
+                            Visibility="{Binding Path=IsCancelEnabled, Converter={StaticResource BoolToVisibility}}">
+                            <Image Source="/AlarmClock;component/resources/btns/undo.png" Height="24"/>
+                        </Button>
+                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
+                        Visibility="{Binding Path=IsSaveEnabled, Converter={StaticResource BoolToVisibility}}"/>
+                        <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                            ToolTip="Bell alarm clock" Command="{Binding BellAlarm}"
+                            Visibility="{Binding Path=IsBellEnabled, Converter={StaticResource BoolToVisibility}}">
+                            <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24"/>
+                        </Button>
+                    </StackPanel>
+                    <Button Style="{StaticResource ToolButton}" Command="{Binding DeleteAlarm}"
+                        ToolTip="Delete alarm" VerticalAlignment="Top" Margin="10,0,0,0"
+                        Opacity="{Binding Path=IsSaveEnabled}">
+                        <Image Source="/AlarmClock;component/resources/btns/delete.png" Height="16"/>
                     </Button>
-                    <!--<Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Ring alarm" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                        <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24"/>
-                    </Button>
-                    <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Delete alarm" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                        <Image Source="/AlarmClock;component/resources/btns/delete.png" Height="24"/>
-                    </Button>-->
                 </StackPanel>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
+                           Visibility="{Binding Path=IsBaseAlarm, Converter={StaticResource BoolToVisibility}}"/>
             </StackPanel>
         </ControlTemplate>
     </UserControl.Resources>
     <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
-            <RowDefinition Height="85*"/>
-            <RowDefinition Height="467*"/>
+            <RowDefinition Height="80*"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -80,13 +108,13 @@
                 <Image Source="/AlarmClock;component/resources/btns/signout.png" Height="32"/>
             </Button>
         </StackPanel>
-            
-        <StackPanel Grid.Row="1" Grid.Column="1" Background="AliceBlue" Orientation="Vertical" Margin="0, 10, 0, 0">
-            <ContentControl Grid.Row="0" Grid.Column="1" Template="{StaticResource AlarmClockTemplate}"/>
-            <ListBox ItemsSource="{Binding Wallets}" SelectedItem="{Binding SelectedWallet}" Height="Auto" Margin="25">
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+            <ListBox ItemsSource="{Binding Clocks}" SelectedItem="{Binding SelectedClock}"
+                     BorderThickness="0" HorizontalContentAlignment="Center">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <ContentControl Grid.Row="0" Grid.Column="1" Template="{StaticResource AlarmClockTemplate}"/>
+                            <ContentControl Template="{StaticResource AlarmClockTemplate}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
