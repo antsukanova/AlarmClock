@@ -180,9 +180,6 @@
     <Resource Include="resources\btns\man-user.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\sign-in32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="resources\btns\signout.png" />
   </ItemGroup>
   <ItemGroup>
