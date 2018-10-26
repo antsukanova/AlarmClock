@@ -33,8 +33,8 @@ namespace AlarmClock.tests
         [Fact]
         public void ButtonsStartState()
         {
-            SignIn.Enabled.Should().BeFalse();
-            Window.Get<Button>("ToSignUp").Enabled.Should().BeTrue();
+            SignInBtn.Enabled.Should().BeFalse();
+            ToSignUpBtn.Enabled.Should().BeTrue();
         }
 
         [Fact]
@@ -42,7 +42,16 @@ namespace AlarmClock.tests
         {
             EnterCredentials();
 
-            SignIn.Enabled.Should().BeTrue();
+            SignInBtn.Enabled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ToSignUp()
+        {
+            ToSignUpBtn.Click();
+
+            // At the SignUp window
+            Window.Get<Button>("SignUp").Should().NotBe(null);
         }
 
         [Fact]
@@ -50,7 +59,7 @@ namespace AlarmClock.tests
         {
             EnterCredentials();
 
-            SignIn.Click();
+            SignInBtn.Click();
 
             var errorBox = Window.MessageBox("");
 
@@ -62,10 +71,26 @@ namespace AlarmClock.tests
             CloseMessageBox();
         }
 
-        //[Fact]
+        [Fact]
         public void SuccessSignIn()
         {
-            // TODO
+            ToSignUpBtn.Click();
+
+            Window.Get<TextBox>("Name").Enter("Name");
+            Window.Get<TextBox>("Surname").Enter("Surname");
+            Window.Get<TextBox>("Email").Enter("E@mai.l");
+            Window.Get<TextBox>("Login").Enter(Login);
+            Window.Get<TextBox>("Password").Enter("Password");
+
+            Window.Get<Button>("SignUp").Click();
+            Window.Get<Button>("SignOut").Click();
+
+            EnterCredentials();
+
+            SignInBtn.Click();
+
+            // At the Main window
+            Window.Get<Button>("SignOut").Should().NotBe(null);
         }
         #endregion
 
@@ -80,7 +105,8 @@ namespace AlarmClock.tests
 
         private const string Login = "Login";
 
-        private static Button SignIn => Window.Get<Button>("SignIn");
+        private static Button SignInBtn => Window.Get<Button>("SignIn");
+        private static Button ToSignUpBtn => Window.Get<Button>("ToSignUp");
         #endregion
     }
 }

@@ -34,7 +34,7 @@ namespace AlarmClock.tests
         [Fact]
         public void ButtonsStartState()
         {
-            SignUp.Enabled.Should().BeFalse();
+            SignUpBtn.Enabled.Should().BeFalse();
             Window.Get<Button>("ToSignIn").Enabled.Should().BeTrue();
         }
 
@@ -43,7 +43,16 @@ namespace AlarmClock.tests
         {
             EnterCredentials();
 
-            SignUp.Enabled.Should().BeTrue();
+            SignUpBtn.Enabled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ToSignIn()
+        {
+            ToSignInBtn.Click();
+
+            // At the SignIn window
+            Window.Get<Button>("SignIn").Should().NotBe(null);
         }
 
         [Fact]
@@ -54,7 +63,7 @@ namespace AlarmClock.tests
             const string invalidEmail = "Invalid";
             Window.Get<TextBox>("Email").Enter(invalidEmail);
 
-            SignUp.Click();
+            SignUpBtn.Click();
 
             var errorBox = Window.MessageBox("");
 
@@ -69,16 +78,14 @@ namespace AlarmClock.tests
         [Fact]
         public void UserAlreadyExists()
         {
-            EnterCredentials();
-            SignUp.Click();
+            SignUp();
 
-            SignOut.Should().NotBe(null);
-            SignOut.Click();
+            SignOutBtn.Should().NotBe(null);
+            SignOutBtn.Click();
 
             ToSignUp();
 
-            EnterCredentials();
-            SignUp.Click();
+            SignUp();
 
             var errorBox = Window.MessageBox("");
 
@@ -93,11 +100,10 @@ namespace AlarmClock.tests
         [Fact]
         public void SuccessSignUp()
         {
-            EnterCredentials();
+            SignUp();
 
-            SignUp.Click();
-
-            SignOut.Should().NotBe(null);
+            // At the Main window
+            SignOutBtn.Should().NotBe(null);
         }
         #endregion
 
@@ -111,13 +117,20 @@ namespace AlarmClock.tests
             Window.Get<TextBox>("Password").Enter("Password");
         }
 
+        private static void SignUp()
+        {
+            EnterCredentials();
+            SignUpBtn.Click();
+        }
+
         private static void CloseMessageBox() => Window.MessageBox("")?.Close();
 
         private const string Login = "Login";
         private const string Email = "E@mai.l";
 
-        private static Button SignUp => Window.Get<Button>("SignUp");
-        private static Button SignOut => Window.Get<Button>("SignOut");
+        private static Button SignUpBtn => Window.Get<Button>("SignUp");
+        private static Button SignOutBtn => Window.Get<Button>("SignOut");
+        private static Button ToSignInBtn => Window.Get<Button>("ToSignIn");
 
         private static void ToSignUp() => Window.Get<Button>("ToSignUp").Click();
         #endregion
