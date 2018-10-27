@@ -80,13 +80,11 @@ namespace AlarmClock.Models
             _owner.Remove(this);
 
             if (currentIndex > 0)
-                _clocks.ForUser()[currentIndex - 1].NextTrigger = _clocks.ForUser()[currentIndex].NextTrigger;
-            if (currentIndex < _clocks.ForUser().Count())
-                _clocks.ForUser()[currentIndex + 1].LastTriggered = _clocks.ForUser()[currentIndex].LastTriggered;
+                _clocks.ForUser(StationManager.CurrentUser.Id)[currentIndex - 1].NextTrigger = _clocks.ForUser(StationManager.CurrentUser.Id)[currentIndex].NextTrigger;
+            if (currentIndex < _clocks.ForUser(StationManager.CurrentUser.Id).Count() - 1)
+                _clocks.ForUser(StationManager.CurrentUser.Id)[currentIndex + 1].LastTriggered = _clocks.ForUser(StationManager.CurrentUser.Id)[currentIndex].LastTriggered;
             _clocks.Delete(currentIndex);
         }
-
-        private void DoBellAlarm(object obj) => MessageBox.Show("Ringing...");
 
         private void ChangeAlarm(ref int v, string obj, int offset, byte highBound)//clocks?
         {
@@ -107,6 +105,7 @@ namespace AlarmClock.Models
 
                 _owner.Add(alarm);
                 _clocks.Add(clock);
+                
                 var sordedList = _owner
                     .Skip(1)
                     .OrderBy(item => GetTimeValue(item))
@@ -114,22 +113,14 @@ namespace AlarmClock.Models
                 for (int i = 1; i < _owner.Count(); i++)
                 {
                     _owner[i] = sordedList[i - 1];
-                    // _clocks.ForUser(StationManager.CurrentUser.Id);
                     if (i > 1)
-                        _clocks.ForUser()[i - 1].LastTriggered = GetNewClockTime(_owner[i - 1]._hour, _owner[i - 1]._minute);
+                        _clocks.ForUser(StationManager.CurrentUser.Id)[i - 1].LastTriggered = GetNewClockTime(_owner[i - 1]._hour, _owner[i - 1]._minute);
                     if (i < _owner.Count() - 1)
-                        _clocks.ForUser()[i - 1].NextTrigger = GetNewClockTime(_owner[i + 1]._hour, _owner[i + 1]._minute);
+                        _clocks.ForUser(StationManager.CurrentUser.Id)[i - 1].NextTrigger = GetNewClockTime(_owner[i + 1]._hour, _owner[i + 1]._minute);
                 }
                 //OnPropertyChanged(nameof(Clocks));
                 OnPropertyChanged(nameof(IsAllowedTime));
-                //for testing _clocks
-/*                for (int g = 0; g < _clocks.ForUser().Count(); g++)
-                {
-                    Clock c = _clocks.ForUser()[g];
-                    int f;
-                    f = 22;
-                }
-*/            }
+            }
             catch (Exception)
             {
                 MessageBox.Show(Resources.CantParseTimeError);
@@ -200,6 +191,19 @@ namespace AlarmClock.Models
                 .Select(item => GetTimeValue(item))
                 .Contains(GetTimeValue(this));
         }
+
+        private bool _isBlinking = false;
+        public bool IsBlinking
+        {
+            get => _isBlinking;
+            set
+            {
+                _isBlinking = value;
+                OnPropertyChanged(nameof(IsBlinking));
+            }
+        }
+
+        private void DoBellAlarm(object obj) => IsBlinking = !IsBlinking;
 
         private bool IsValidTime(string text, int param) =>
             !regex.IsMatch(text) && text.Length == 2 &&

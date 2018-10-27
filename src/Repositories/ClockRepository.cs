@@ -22,9 +22,9 @@ namespace AlarmClock.Repositories
 
         public List<Clock> ForUser(Guid id) =>
             Clocks
-                .Where(c => c.Owner.Id == id) as List<Clock>;
+                .Where(c => c.Owner.Id == id).ToList();// as List<Clock>;
 
-        public List<Clock> ForUser() => Clocks;// temporary solution
+        //public List<Clock> ForUser() => Clocks;// temporary solution
 
         public Clock Add(Clock clock)
         {

@@ -13,6 +13,20 @@
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="Opacity" Value="0.25"></Setter>
                 </Trigger>
+                <DataTrigger Binding="{Binding IsBlinking}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="blinking">
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" AutoReverse="True"
+                                         To="0.1" Duration="0:0:0.5">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="blinking"/>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="ToolButton" TargetType="Control">
@@ -72,7 +86,9 @@
                             ToolTip="Bell alarm clock" Command="{Binding BellAlarm}"
                             Visibility="{Binding Path=IsBellEnabled, Converter={StaticResource BoolToVisibility}}"
                             IsEnabled="{Binding Path=IsAllowedTime}">
-                            <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24" Style="{StaticResource ImageEnabled}"/>
+                            <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24" Style="{StaticResource ImageEnabled}">
+                                
+                            </Image>
                         </Button>
                     </StackPanel>
                     <Button Style="{StaticResource ToolButton}" Command="{Binding DeleteAlarm}"
@@ -116,7 +132,7 @@
                      BorderThickness="0" HorizontalContentAlignment="Center">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                            <ContentControl Template="{StaticResource AlarmClockTemplate}"/>
+                        <ContentControl Template="{StaticResource AlarmClockTemplate}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

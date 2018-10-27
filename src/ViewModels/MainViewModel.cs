@@ -70,7 +70,11 @@ namespace AlarmClock.ViewModels
             timer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e) =>
-            CurrentTime = DateTime.Now.ToString("H:mm:ss");
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            DateTime dt = DateTime.Now;
+            CurrentTime = dt.ToString("H:mm:ss");
+//            AlarmClocks.Con
+        }
     }
 }
