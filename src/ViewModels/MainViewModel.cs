@@ -17,10 +17,8 @@ namespace AlarmClock.ViewModels
     class MainViewModel : NotifyPropertyChanged
     {
         #region attributes
-        private static readonly Regex Regex = new Regex("[^0-9.-]+");
+//        private static readonly Regex Regex = new Regex("[^0-9.-]+");
         private string _currentTime;
-
-        private Clock _selectedClock;
 
         private ICommand _signOut;
         #endregion
@@ -40,16 +38,6 @@ namespace AlarmClock.ViewModels
 
         #region List of AlarmClocks
         public ObservableCollection<AlarmItem> Clocks { get; }
-/*        public Clock SelectedClock
-        {
-            get => _selectedClock;
-            set
-            {
-                _selectedClock = value;
-                OnPropertyChanged();
-            }
-        }
-*/
         #endregion
 
         #region command functions
@@ -68,7 +56,6 @@ namespace AlarmClock.ViewModels
             Clocks = new ObservableCollection<AlarmItem>();
 
             SetTimer();
-//            var clock = new Clock(dt, dt, StationManager.CurrentUser);
             Clocks.Add(new AlarmItem(Clocks, dt.Hour, dt.Minute));            
         }
         

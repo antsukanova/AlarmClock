@@ -47,14 +47,14 @@
                             <Button Command="{Binding ClickDownMinute}" Content="˅" Height="32" Width="20" />
                         </StackPanel>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center" Width="120">
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center" Width="80">
                         <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
                             ToolTip="Add alarm clock" Command="{Binding AddAlarm}"
                             Visibility="{Binding Path=IsAddEnabled, Converter={StaticResource BoolToVisibility}}"
                             IsEnabled="{Binding Path=IsAllowedTime}">
                             <Image Source="/AlarmClock;component/resources/btns/add.png" Height="24" Style="{StaticResource ImageEnabled}"/>
                         </Button>
-                        <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                        <!--<Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
                             ToolTip="Save alarm clock" Command="{Binding SaveAlarm}"
                             Visibility="{Binding Path=IsSaveEnabled, Converter={StaticResource BoolToVisibility}}"
                             IsEnabled="{Binding Path=IsAllowedTime}">
@@ -64,13 +64,14 @@
                             ToolTip="Cancel changes" Command="{Binding CancelAlarm}"
                             Visibility="{Binding Path=IsCancelEnabled, Converter={StaticResource BoolToVisibility}}">
                             <Image Source="/AlarmClock;component/resources/btns/undo.png" Height="24"/>
-                        </Button>
+                        </Button>-->
                         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
                         Visibility="{Binding Path=IsSaveEnabled, Converter={StaticResource BoolToVisibility}}"/>
                         <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
                             ToolTip="Bell alarm clock" Command="{Binding BellAlarm}"
-                            Visibility="{Binding Path=IsBellEnabled, Converter={StaticResource BoolToVisibility}}">
-                            <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24"/>
+                            Visibility="{Binding Path=IsBellEnabled, Converter={StaticResource BoolToVisibility}}"
+                            IsEnabled="{Binding Path=IsAllowedTime}">
+                            <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24" Style="{StaticResource ImageEnabled}"/>
                         </Button>
                     </StackPanel>
                     <Button Style="{StaticResource ToolButton}" Command="{Binding DeleteAlarm}"
@@ -110,7 +111,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
-            <ListBox ItemsSource="{Binding Clocks}" SelectedItem="{Binding SelectedClock}"
+            <ListBox ItemsSource="{Binding Clocks}" SelectedItem="{Binding SelectedAlarm}"
                      BorderThickness="0" HorizontalContentAlignment="Center">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

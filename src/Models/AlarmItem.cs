@@ -29,6 +29,7 @@ namespace AlarmClock.Models
         private ICommand _addAlarm;
         private ICommand _deleteAlarm;
         private ICommand _bellAlarm;
+//        private AlarmItem _selectedAlarm;
 
         public AlarmItem(ObservableCollection<AlarmItem> owner, int hour, int minute)
         {
@@ -69,6 +70,16 @@ namespace AlarmClock.Models
         public ICommand BellAlarm => _bellAlarm ?? (_bellAlarm = new RelayCommand(DoBellAlarm));
         #endregion
 
+/*        public AlarmItem SelectedAlarm
+        {
+            get => _selectedAlarm ?? this;
+            set
+            {
+                _selectedAlarm = value;
+                OnPropertyChanged();
+            }
+        }
+*/
         private void DoDeleteAlarm(object obj) => _owner.Remove(this);
 
         private void DoBellAlarm(object obj) => MessageBox.Show("Ringing...");
@@ -80,6 +91,7 @@ namespace AlarmClock.Models
             v = newValue == -1 ? highBound : newValue == highBound + 1 ? 0 : newValue;
             OnPropertyChanged(obj);
             OnPropertyChanged(nameof(IsAllowedTime));
+            _owner[0].OnPropertyChanged(nameof(IsAllowedTime));
         }
 
         private void AddAlarmClockExecute(object obj)
@@ -87,17 +99,14 @@ namespace AlarmClock.Models
             try
             {
                 // create new clock for user (use GetNewClockTime)
-//                DateTime dt = GetNewClockTime();
+                //                DateTime dt = GetNewClockTime();
 
-//                var clock = new Clock(dt, dt, StationManager.CurrentUser);
-                _owner.Add(new AlarmItem(_owner, _hour, _minute));// clock);
-                                                                  //                OnPropertyChanged(nameof(Clocks));
+                //                var clock = new Clock(dt, dt, StationManager.CurrentUser);
+                var ai = new AlarmItem(_owner, _hour, _minute);
 
-                //                _selectedClock = clock;
-                //                CollectionViewSource.GetDefaultView(Clocks).Refresh();
-
-                //    _textHour = dt.Hour.ToString();
-                //    _textMinute = dt.Minute.ToString();
+                // var clock = new Clock(dt, dt, StationManager.CurrentUser);
+                _owner.Add(ai);
+                //OnPropertyChanged(nameof(Clocks));
                 OnPropertyChanged(nameof(IsAllowedTime));
             }
             catch (Exception)
@@ -161,8 +170,9 @@ namespace AlarmClock.Models
         {
             get => !_owner
                 .Skip(1)
-                .Select(item => new { item._hour, item._minute })
-                .Contains(new { _hour, _minute });
+                .Where(item => item != this)
+                .Select(item => item._hour * 100 + item._minute)
+                .Contains(_hour * 100 + _minute);
         }
 
         private bool IsValidTime(string text, int param) =>
