@@ -106,7 +106,7 @@
             <Label Content="User" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
 
             <Button Style="{StaticResource ToolButton}" ToolTip="Sign Out" 
-                    Margin="20,0,0,0" Command="{Binding SignOut}">
+                    Margin="20,0,0,0" Command="{Binding SignOut}" Name="SignOut">
                 <Image Source="/AlarmClock;component/resources/btns/signout.png" Height="32"/>
             </Button>
         </StackPanel>
