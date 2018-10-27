@@ -31,7 +31,6 @@ namespace AlarmClock.Models
         private ICommand _addAlarm;
         private ICommand _deleteAlarm;
         private ICommand _bellAlarm;
-//        private AlarmItem _selectedAlarm;
 
         public AlarmItem(ObservableCollection<AlarmItem> owner, ClockRepository clocks, int hour, int minute)
         {
@@ -73,22 +72,23 @@ namespace AlarmClock.Models
         public ICommand BellAlarm => _bellAlarm ?? (_bellAlarm = new RelayCommand(DoBellAlarm));
         #endregion
 
-        /*        public AlarmItem SelectedAlarm
-                {
-                    get => _selectedAlarm ?? this;
-                    set
-                    {
-                        _selectedAlarm = value;
-                        OnPropertyChanged();
-                    }
-                }
-        */
         private int GetTimeValue(AlarmItem ai) => ai._hour * maxMinutes + ai._minute;
-        private void DoDeleteAlarm(object obj) => _owner.Remove(this);
+        private void DoDeleteAlarm(object obj)
+        {
+            int currentIndex = GetAlarmIndex() - 1;
+
+            _owner.Remove(this);
+
+            if (currentIndex > 0)
+                _clocks.ForUser()[currentIndex - 1].NextTrigger = _clocks.ForUser()[currentIndex].NextTrigger;
+            if (currentIndex < _clocks.ForUser().Count())
+                _clocks.ForUser()[currentIndex + 1].LastTriggered = _clocks.ForUser()[currentIndex].LastTriggered;
+            _clocks.Delete(currentIndex);
+        }
 
         private void DoBellAlarm(object obj) => MessageBox.Show("Ringing...");
 
-        private void ChangeAlarm(ref int v, string obj, int offset, byte highBound)
+        private void ChangeAlarm(ref int v, string obj, int offset, byte highBound)//clocks?
         {
             var newValue = v + offset;
 
@@ -103,19 +103,33 @@ namespace AlarmClock.Models
             try
             {
                 var alarm = new AlarmItem(_owner, _clocks, _hour, _minute);
-//                var clock = new Clock(StationManager.CurrentUser);
+                var clock = new Clock(StationManager.CurrentUser);
 
                 _owner.Add(alarm);
+                _clocks.Add(clock);
                 var sordedList = _owner
                     .Skip(1)
                     .OrderBy(item => GetTimeValue(item))
                     .ToList();
                 for (int i = 1; i < _owner.Count(); i++)
+                {
                     _owner[i] = sordedList[i - 1];
-                //                _clocks.Add(clock);
+                    // _clocks.ForUser(StationManager.CurrentUser.Id);
+                    if (i > 1)
+                        _clocks.ForUser()[i - 1].LastTriggered = GetNewClockTime(_owner[i - 1]._hour, _owner[i - 1]._minute);
+                    if (i < _owner.Count() - 1)
+                        _clocks.ForUser()[i - 1].NextTrigger = GetNewClockTime(_owner[i + 1]._hour, _owner[i + 1]._minute);
+                }
                 //OnPropertyChanged(nameof(Clocks));
                 OnPropertyChanged(nameof(IsAllowedTime));
-            }
+                //for testing _clocks
+/*                for (int g = 0; g < _clocks.ForUser().Count(); g++)
+                {
+                    Clock c = _clocks.ForUser()[g];
+                    int f;
+                    f = 22;
+                }
+*/            }
             catch (Exception)
             {
                 MessageBox.Show(Resources.CantParseTimeError);
@@ -128,15 +142,20 @@ namespace AlarmClock.Models
             // reload clocks list OR just add created clock to it
         }
 
-        private DateTime GetNewClockTime()
+        private int GetAlarmIndex()
         {
-            // Ok if throws
-            //  var hour = int.Parse(_hour);
-            //  var minute = int.Parse(_minute);
+            for (int i = 1; i < _owner.Count(); i++)
+                if (GetTimeValue(_owner[i]) == GetTimeValue(this))
+                    return i;
 
+            return -1;
+        }
+
+        private DateTime GetNewClockTime(int hour, int minute)
+        {
             var tmpDate = DateTime.Now.AddDays(1);
 
-            return new DateTime();// tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
+            return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
         }
 
         public string Hour

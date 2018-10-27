@@ -22,7 +22,7 @@ namespace AlarmClock.ViewModels
         private ICommand _signOut;
         #endregion
 
-//        #region properties
+        #region properties
         public string CurrentTime
         {
             get => _currentTime;
@@ -34,6 +34,7 @@ namespace AlarmClock.ViewModels
         }
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
+        #endregion
 
         #region List of AlarmClocks
         public ObservableCollection<AlarmItem> AlarmClocks { get; }

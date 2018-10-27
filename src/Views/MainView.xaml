@@ -29,6 +29,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="FontSize" Value="24" />
         </Style>
+
         <ControlTemplate x:Key="AlarmClockTemplate" TargetType="ContentControl">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2">
