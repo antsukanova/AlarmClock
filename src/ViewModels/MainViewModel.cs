@@ -17,7 +17,6 @@ namespace AlarmClock.ViewModels
     class MainViewModel : NotifyPropertyChanged
     {
         #region attributes
-//        private static readonly Regex Regex = new Regex("[^0-9.-]+");
         private string _currentTime;
 
         private ICommand _signOut;
@@ -37,7 +36,8 @@ namespace AlarmClock.ViewModels
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
 
         #region List of AlarmClocks
-        public ObservableCollection<AlarmItem> Clocks { get; }
+        public ObservableCollection<AlarmItem> AlarmClocks { get; }
+        public ClockRepository Clocks { get; }
         #endregion
 
         #region command functions
@@ -53,10 +53,11 @@ namespace AlarmClock.ViewModels
         public MainViewModel()
         {
             DateTime dt = DateTime.Now;
-            Clocks = new ObservableCollection<AlarmItem>();
+            AlarmClocks = new ObservableCollection<AlarmItem>();
+            Clocks = new ClockRepository();
 
             SetTimer();
-            Clocks.Add(new AlarmItem(Clocks, dt.Hour, dt.Minute));            
+            AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, dt.Hour, dt.Minute));            
         }
         
         private void SetTimer()

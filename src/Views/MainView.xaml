@@ -111,7 +111,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
-            <ListBox ItemsSource="{Binding Clocks}" SelectedItem="{Binding SelectedAlarm}"
+            <ListBox ItemsSource="{Binding AlarmClocks}" SelectedItem="{Binding SelectedAlarm}"
                      BorderThickness="0" HorizontalContentAlignment="Center">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

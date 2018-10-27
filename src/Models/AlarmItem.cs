@@ -1,6 +1,7 @@
 ﻿using AlarmClock.Managers;
 using AlarmClock.Misc;
 using AlarmClock.Properties;
+using AlarmClock.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +19,8 @@ namespace AlarmClock.Models
         private static readonly Regex regex = new Regex("[^0-9.-]+");
         private readonly byte maxMinutes = (byte)(TimeSpan.TicksPerMinute / TimeSpan.TicksPerSecond) - 1;
         private readonly byte maxHours = (byte)(TimeSpan.TicksPerDay / TimeSpan.TicksPerHour) - 1;
-        private readonly ObservableCollection<AlarmItem> _owner;
+        private ObservableCollection<AlarmItem> _owner;
+        private readonly ClockRepository _clocks;
 
         private int _hour;
         private int _minute;
@@ -31,9 +33,10 @@ namespace AlarmClock.Models
         private ICommand _bellAlarm;
 //        private AlarmItem _selectedAlarm;
 
-        public AlarmItem(ObservableCollection<AlarmItem> owner, int hour, int minute)
+        public AlarmItem(ObservableCollection<AlarmItem> owner, ClockRepository clocks, int hour, int minute)
         {
             _owner = owner;
+            _clocks = clocks;
             _hour = hour;
             _minute = minute;
         }
@@ -70,16 +73,17 @@ namespace AlarmClock.Models
         public ICommand BellAlarm => _bellAlarm ?? (_bellAlarm = new RelayCommand(DoBellAlarm));
         #endregion
 
-/*        public AlarmItem SelectedAlarm
-        {
-            get => _selectedAlarm ?? this;
-            set
-            {
-                _selectedAlarm = value;
-                OnPropertyChanged();
-            }
-        }
-*/
+        /*        public AlarmItem SelectedAlarm
+                {
+                    get => _selectedAlarm ?? this;
+                    set
+                    {
+                        _selectedAlarm = value;
+                        OnPropertyChanged();
+                    }
+                }
+        */
+        private int GetTimeValue(AlarmItem ai) => ai._hour * maxMinutes + ai._minute;
         private void DoDeleteAlarm(object obj) => _owner.Remove(this);
 
         private void DoBellAlarm(object obj) => MessageBox.Show("Ringing...");
@@ -98,14 +102,17 @@ namespace AlarmClock.Models
         {
             try
             {
-                // create new clock for user (use GetNewClockTime)
-                //                DateTime dt = GetNewClockTime();
+                var alarm = new AlarmItem(_owner, _clocks, _hour, _minute);
+//                var clock = new Clock(StationManager.CurrentUser);
 
-                //                var clock = new Clock(dt, dt, StationManager.CurrentUser);
-                var ai = new AlarmItem(_owner, _hour, _minute);
-
-                // var clock = new Clock(dt, dt, StationManager.CurrentUser);
-                _owner.Add(ai);
+                _owner.Add(alarm);
+                var sordedList = _owner
+                    .Skip(1)
+                    .OrderBy(item => GetTimeValue(item))
+                    .ToList();
+                for (int i = 1; i < _owner.Count(); i++)
+                    _owner[i] = sordedList[i - 1];
+                //                _clocks.Add(clock);
                 //OnPropertyChanged(nameof(Clocks));
                 OnPropertyChanged(nameof(IsAllowedTime));
             }
@@ -171,8 +178,8 @@ namespace AlarmClock.Models
             get => !_owner
                 .Skip(1)
                 .Where(item => item != this)
-                .Select(item => item._hour * 100 + item._minute)
-                .Contains(_hour * 100 + _minute);
+                .Select(item => GetTimeValue(item))
+                .Contains(GetTimeValue(this));
         }
 
         private bool IsValidTime(string text, int param) =>
