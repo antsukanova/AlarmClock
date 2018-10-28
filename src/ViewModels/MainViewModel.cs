@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 using AlarmClock.Managers;
 using AlarmClock.Misc;
 using AlarmClock.Models;
-using AlarmClock.Properties;
 using AlarmClock.Repositories;
 
 namespace AlarmClock.ViewModels
@@ -32,6 +28,8 @@ namespace AlarmClock.ViewModels
                 OnPropertyChanged(nameof(CurrentTime));
             }
         }
+
+        public static User CurrentUser { get; } = StationManager.CurrentUser;
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
         #endregion
