@@ -10,16 +10,14 @@ namespace AlarmClock.Repositories
     {
         private static readonly List<Clock> Clocks = new List<Clock>();
 
-        public bool Exists(Clock clock)
-        {
-            return Clocks.Any(c => c.NextTrigger == clock.NextTrigger &&
-                                   c.Owner       == clock.Owner);
-        }
+        public bool Exists(Clock clock) =>
+            Clocks
+                .Any(c => c.NextTrigger == clock.NextTrigger &&
+                          c.Owner       == clock.Owner);
 
-        public List<Clock> ForUser(Guid id)
-        {
-            return Clocks.Where(c => c.Owner.Id == id) as List<Clock>;
-        }
+        public List<Clock> ForUser(Guid id) =>
+            Clocks
+                .Where(c => c.Owner.Id == id).ToList();
 
         public Clock Add(Clock clock)
         {
@@ -46,5 +44,7 @@ namespace AlarmClock.Repositories
 
             return id;
         }
+
+        public void Delete(int index) => Clocks.RemoveAt(index);
     }
 }

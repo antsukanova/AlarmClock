@@ -51,6 +51,12 @@ namespace AlarmClock.Models
             NextTrigger = nextTrigger;
             Owner = owner;
         }
+
+        public Clock(User owner)
+        {
+            Id = Guid.NewGuid();
+            Owner = owner;
+        }
         #endregion
     }
 }

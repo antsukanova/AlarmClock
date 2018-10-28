@@ -116,6 +116,7 @@
     <Compile Include="src\Managers\StationManager.cs" />
     <Compile Include="src\Misc\Encrypter.cs" />
     <Compile Include="src\Misc\NotifyPropertyChanged.cs" />
+    <Compile Include="src\Models\AlarmItem.cs" />
     <Compile Include="src\Models\Clock.cs" />
     <Compile Include="src\Repositories\IClockRepository.cs" />
     <Compile Include="src\Repositories\IUserRepository.cs" />
@@ -191,7 +192,12 @@
   <ItemGroup>
     <Resource Include="resources\btns\bell.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="resources\btns\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\btns\undo.png" />
+  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
