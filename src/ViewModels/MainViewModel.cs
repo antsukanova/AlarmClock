@@ -29,14 +29,14 @@ namespace AlarmClock.ViewModels
             }
         }
 
+        public ObservableCollection<AlarmItem> AlarmClocks { get; } =
+            new ObservableCollection<AlarmItem>();
+
+        public ClockRepository Clocks { get; } = new ClockRepository();
+
         public static User CurrentUser { get; } = StationManager.CurrentUser;
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
-        #endregion
-
-        #region List of AlarmClocks
-        public ObservableCollection<AlarmItem> AlarmClocks { get; }
-        public ClockRepository Clocks { get; }
         #endregion
 
         #region command functions
@@ -46,33 +46,26 @@ namespace AlarmClock.ViewModels
 
             NavigationManager.Navigate(Page.SignIn);
         }
-
         #endregion
 
         public MainViewModel()
         {
-            DateTime dt = DateTime.Now;
-            AlarmClocks = new ObservableCollection<AlarmItem>();
-            Clocks = new ClockRepository();
-
             SetTimer();
-            AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, dt.Hour, dt.Minute));            
+
+            var now = DateTime.Now;
+            AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));            
         }
         
         private void SetTimer()
         {
             var timer = new DispatcherTimer();
 
-            timer.Tick += Timer_Tick;
+            timer.Tick += TimerTick;
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            DateTime dt = DateTime.Now;
-            CurrentTime = dt.ToString("H:mm:ss");
-//            AlarmClocks.Con
-        }
+        private void TimerTick(object sender, EventArgs e) =>
+            CurrentTime = DateTime.Now.ToString("H:mm:ss");
     }
 }

@@ -4,11 +4,6 @@ using System.Linq;
 
 using AlarmClock.Models;
 
-//TODO
-//Scroll alarms
-//Add Clocks 
-//Ring bells implementation
-
 namespace AlarmClock.Repositories
 {
     public class ClockRepository : IClockRepository
@@ -18,13 +13,11 @@ namespace AlarmClock.Repositories
         public bool Exists(Clock clock) =>
             Clocks
                 .Any(c => c.NextTrigger == clock.NextTrigger &&
-                    c.Owner == clock.Owner);
+                          c.Owner       == clock.Owner);
 
         public List<Clock> ForUser(Guid id) =>
             Clocks
-                .Where(c => c.Owner.Id == id).ToList();// as List<Clock>;
-
-        //public List<Clock> ForUser() => Clocks;// temporary solution
+                .Where(c => c.Owner.Id == id).ToList();
 
         public Clock Add(Clock clock)
         {
