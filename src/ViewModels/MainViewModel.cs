@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -25,6 +26,7 @@ namespace AlarmClock.ViewModels
             set
             {
                 _currentTime = value;
+                                
                 OnPropertyChanged(nameof(CurrentTime));
             }
         }
@@ -34,14 +36,28 @@ namespace AlarmClock.ViewModels
 
         public ClockRepository Clocks { get; } = new ClockRepository();
 
-        public static User CurrentUser { get; } = StationManager.CurrentUser;
+        public User CurrentUser => StationManager.CurrentUser;
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
+
+        private AlarmItem BaseAlarm => AlarmClocks.Where(item => item.IsBaseAlarm).Single();
+
+        public void Changed()
+        {
+            OnPropertyChanged(nameof(CurrentUser));
+
+            foreach (AlarmItem ai in AlarmClocks.Where(item => item != BaseAlarm))
+                ai.IsVisible = ai.Clock.Owner == (StationManager.CurrentUser ?? ai.Clock.Owner);
+
+            BaseAlarm.Update();
+        }
         #endregion
 
         #region command functions
         private void SignOutExecute(object obj)
         {
+            BaseAlarm.Rearrange();
+
             StationManager.CurrentUser = null;
 
             NavigationManager.Navigate(Page.SignIn);
@@ -50,22 +66,51 @@ namespace AlarmClock.ViewModels
 
         public MainViewModel()
         {
-            SetTimer();
-
             var now = DateTime.Now;
-            AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));            
+
+            AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));
+
+            Changed();
+
+            SetTimer().Start();
+            CheckAlarm().Start();
         }
-        
-        private void SetTimer()
+
+        private DispatcherTimer SetTimer()
         {
-            var timer = new DispatcherTimer();
+            var timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
 
-            timer.Tick += TimerTick;
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Start();
+            timer.Tick += delegate
+            {
+                CurrentTime = DateTime.Now.ToString("H:mm:ss");
+            };
+
+            return timer;
         }
 
-        private void TimerTick(object sender, EventArgs e) =>
-            CurrentTime = DateTime.Now.ToString("H:mm:ss");
+        private DispatcherTimer CheckAlarm()
+        {
+            var timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromMilliseconds(200)
+            };
+
+            timer.Tick += delegate
+            {
+                DateTime dt = DateTime.Now;
+                var userAlarms = AlarmClocks[0].UserAlarms;
+
+                foreach (AlarmItem ai in userAlarms)
+                {
+                    if (ai.Equals(dt) && !ai.IsStopped && !userAlarms.Any(item => item.IsActive))
+                        ai.IsActive = true;
+                }
+            };
+
+            return timer;
+        }
     }
 }

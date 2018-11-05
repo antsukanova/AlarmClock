@@ -3,6 +3,7 @@ using AlarmClock.Misc;
 using AlarmClock.Properties;
 using AlarmClock.Repositories;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -14,15 +15,16 @@ namespace AlarmClock.Models
     public class AlarmItem : NotifyPropertyChanged
     {
         #region attributes
+        private static readonly Regex Regex = new Regex("[^0-9.-]+");
         private const byte MaxMinutes = (byte) (TimeSpan.TicksPerMinute / TimeSpan.TicksPerSecond) - 1;
         private const byte MaxHours = (byte) (TimeSpan.TicksPerDay / TimeSpan.TicksPerHour) - 1;
 
-        private static readonly Regex Regex = new Regex("[^0-9.-]+");
         private readonly ObservableCollection<AlarmItem> _owner;
         private readonly ClockRepository _clocks;
 
         private int _hour;
         private int _minute;
+        private Clock _clock;
         private ICommand _clickUpHour;
         private ICommand _clickDownHour;
         private ICommand _clickUpMinute;
@@ -31,10 +33,16 @@ namespace AlarmClock.Models
         private ICommand _deleteAlarm;
         private ICommand _bellAlarm;
 
-        private bool _isBlinking;
+        private bool _isActive;
+        private bool _isVisible = true;
+        private bool _isStopped = false;
         #endregion
 
         #region properties
+        public List<AlarmItem> UserAlarms => _owner
+            .Where(item => !item.IsBaseAlarm && item.IsVisible)
+            .ToList();
+
         public string Hour
         {
             get => $"{_hour:00}";
@@ -44,6 +52,7 @@ namespace AlarmClock.Models
                     return;
 
                 _hour = int.Parse(value);
+
                 OnPropertyChanged(nameof(Hour));
                 OnPropertyChanged(nameof(IsAllowedTime));
             }
@@ -58,12 +67,13 @@ namespace AlarmClock.Models
                     return;
 
                 _minute = int.Parse(value);
+
                 OnPropertyChanged(nameof(Minute));
                 OnPropertyChanged(nameof(IsAllowedTime));
             }
         }
 
-        public bool IsBaseAlarm => _owner.IndexOf(this) == 0;
+        public bool IsBaseAlarm => _clock == null;
         public bool IsAddEnabled => IsBaseAlarm;
         public bool IsSaveEnabled => !IsBaseAlarm;
         public bool IsCancelEnabled => !IsBaseAlarm;
@@ -71,20 +81,41 @@ namespace AlarmClock.Models
         public bool IsDeleteEnabled => !IsBaseAlarm;
 
         public bool IsAllowedTime =>
-            !_owner.Skip(1)
+            !UserAlarms
                    .Where(item => item != this)
                    .Select(GetTimeValue)
                    .Contains(GetTimeValue(this));
 
-        public bool IsBlinking
+        public bool IsActive
         {
-            get => _isBlinking;
+            get => _isActive;
             set
             {
-                _isBlinking = value;
-                OnPropertyChanged(nameof(IsBlinking));
+                if (value && !UserAlarms.Any(item => item.IsActive) || !value)
+                {
+                    _isActive = value;
+
+                    OnPropertyChanged(nameof(IsEnabled));
+                    OnPropertyChanged(nameof(IsActive));
+                }
             }
         }
+
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                _isVisible = value;
+
+                OnPropertyChanged(nameof(IsVisible));
+            }
+        }
+
+        public bool IsStopped => _isStopped;
+        public bool IsEnabled => IsBaseAlarm || !IsActive;
+
+        public Clock Clock => _clock;
         #endregion
 
         #region commands
@@ -112,11 +143,17 @@ namespace AlarmClock.Models
                 delegate { ChangeAlarm(ref _minute, nameof(Minute), -1, MaxMinutes); }
            ));
 
-        public ICommand AddAlarm => _addAlarm ?? (_addAlarm = new RelayCommand(AddAlarmClockExecute));
+        public ICommand AddAlarm => _addAlarm ?? (_addAlarm = new RelayCommand(AddAlarmExecute));
 
-        public ICommand DeleteAlarm => _deleteAlarm ?? (_deleteAlarm = new RelayCommand(DoDeleteAlarm));
+        public ICommand DeleteAlarm => _deleteAlarm ?? (_deleteAlarm = new RelayCommand(DeleteAlarmExecute));
 
-        public ICommand BellAlarm => _bellAlarm ?? (_bellAlarm = new RelayCommand(DoBellAlarm));
+        public ICommand BellAlarm => _bellAlarm ?? (_bellAlarm = new RelayCommand(
+            delegate
+            {
+                if (IsActive)
+                    _isStopped = true;
+                IsActive = !IsActive;
+            }));
         #endregion
 
         public AlarmItem(ObservableCollection<AlarmItem> owner, ClockRepository clocks, int hour, int minute)
@@ -127,61 +164,69 @@ namespace AlarmClock.Models
             _minute = minute;
         }
 
-        private static int GetTimeValue(AlarmItem ai) => ai._hour * MaxMinutes + ai._minute;
-        private void DoDeleteAlarm(object obj)
+        private int GetTimeValue(AlarmItem ai) => ai._hour * MaxMinutes + ai._minute;
+        private int GetTimeValue(DateTime dt) => dt.Hour * MaxMinutes + dt.Minute;
+        public bool Equals(DateTime dt) => GetTimeValue(dt) == GetTimeValue(this);
+
+        private void DeleteAlarmExecute(object obj)
         {
-            var currentIndex = GetAlarmIndex() - 1;
-
-            _owner.Remove(this);
-
             var userClocks = _clocks.ForUser(StationManager.CurrentUser.Id);
 
-            if (currentIndex > 0)
-                userClocks[currentIndex - 1].NextTrigger = userClocks[currentIndex].NextTrigger;
+            for (int i = 1, j = 0; i < _owner.Count; i++)
+            {
+                if (_owner[i].IsVisible && _owner[i] != this)
+                {
+                    _owner[i].Clock.LastTriggered = j == 0 ? new DateTime() : userClocks[j - 1].NextTrigger;
 
-            if (currentIndex < userClocks.Count - 1)
-                userClocks[currentIndex + 1].LastTriggered = userClocks[currentIndex].LastTriggered;
+                    _owner[i].Clock.NextTrigger = j + 1 == userClocks.Count ? new DateTime() : userClocks[j + 1].LastTriggered;
 
-            _clocks.Delete(currentIndex);
+//                    (in process for filter clocks in the same order as alarms)_clocks[i - 1] = _owner[i].Clock;
+                    j++;
+                }
+            }
+            _clocks.Delete(Clock.Id);
+            _owner.Remove(this);
+
+            Update();
         }
 
-        private void ChangeAlarm(ref int v, string obj, int offset, byte highBound)//clocks?
+        private void ChangeAlarm(ref int v, string obj, int offset, byte highBound)
         {
             var newValue = v + offset;
 
             v = newValue == -1 ? highBound : (newValue == highBound + 1 ? 0 : newValue);
 
+            _isStopped = false;
+
             OnPropertyChanged(obj);
             OnPropertyChanged(nameof(IsAllowedTime));
 
-            _owner[0].OnPropertyChanged(nameof(IsAllowedTime));
+            Update();
         }
 
-        private void AddAlarmClockExecute(object obj)
+        public void Update()
+        {
+            var now = DateTime.Now;
+
+            //TODO change time in first alarm 
+            //_hour = now.Hour;
+            //_minute = now.Minute;
+            _owner[0].OnPropertyChanged(nameof(IsAllowedTime));
+            //OnPropertyChanged(nameof(Hour));
+            //OnPropertyChanged(nameof(Minute));
+        } 
+
+        private void AddAlarmExecute(object obj)
         {
             try
             {
-                var alarm = new AlarmItem(_owner, _clocks, _hour, _minute);
-                var clock = new Clock(StationManager.CurrentUser);
-
-                _owner.Add(alarm);
-                _clocks.Add(clock);
-
-                var sortedList = _owner.Skip(1).OrderBy(GetTimeValue).ToList();
-
-                var userClocks = _clocks.ForUser(StationManager.CurrentUser.Id);
-
-                for (var i = 1; i < _owner.Count; i++)
+                _owner.Add(new AlarmItem(_owner, _clocks, _hour, _minute)
                 {
-                    _owner[i] = sortedList[i - 1];
+                    _clock = _clocks.Add(new Clock(StationManager.CurrentUser))
+                });
 
-                    if (i > 1)
-                        userClocks[i - 1].LastTriggered = GetNewClockTime(_owner[i - 1]._hour, _owner[i - 1]._minute);
+                Rearrange();
 
-                    if (i < _owner.Count - 1)
-                        userClocks[i - 1].NextTrigger = GetNewClockTime(_owner[i + 1]._hour, _owner[i + 1]._minute);
-                }
-                //OnPropertyChanged(nameof(Clocks));
                 OnPropertyChanged(nameof(IsAllowedTime));
             }
             catch (Exception)
@@ -190,15 +235,26 @@ namespace AlarmClock.Models
             }
         }
 
-        private int GetAlarmIndex()
+        public void Rearrange()
         {
-            for (var i = 1; i < _owner.Count; i++)
-            {
-                if (GetTimeValue(_owner[i]) == GetTimeValue(this))
-                    return i;
-            }
+            var sortedList = UserAlarms.OrderBy(GetTimeValue).ToList();
 
-            return -1;
+            for (int i = 1, j = 0; i < _owner.Count; i++)
+            {
+                if (_owner[i].IsVisible)
+                {
+                    _owner[i] = sortedList[j];
+
+                    if (j > 0)
+                        _owner[i].Clock.LastTriggered = GetNewClockTime(sortedList[j - 1]._hour, sortedList[j - 1]._minute);
+
+                    if (j < sortedList.Count - 1)
+                        _owner[i].Clock.NextTrigger = GetNewClockTime(sortedList[j + 1]._hour, sortedList[j + 1]._minute);
+
+                    //(the same as above)_clocks[i - 1] = _owner[i].Clock;
+                    j++;
+                }
+            }
         }
 
         private static DateTime GetNewClockTime(int hour, int minute)
@@ -207,8 +263,6 @@ namespace AlarmClock.Models
 
             return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
         }
-
-        private void DoBellAlarm(object obj) => IsBlinking = !IsBlinking;
 
         private bool IsValidTime(string text, int param) =>
             !Regex.IsMatch(text) && text.Length == 2 &&
