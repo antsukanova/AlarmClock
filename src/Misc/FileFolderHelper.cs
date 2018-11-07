@@ -15,7 +15,7 @@ namespace AlarmClock.Misc
             Path.Combine(ClientFolderPath, "Log");
 
         internal static readonly string LogFilepath = Path.Combine(
-            LogFolderPath, $"App_{DateTime.Now:YYYY_MM_DD}.txt"
+            LogFolderPath, $"Logs_{DateTime.Now:yyyy_MM_dd}.txt"
         );
 
         internal static readonly string UserAlarmsFilePath =
