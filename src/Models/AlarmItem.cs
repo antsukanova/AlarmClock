@@ -24,7 +24,6 @@ namespace AlarmClock.Models
 
         private int _hour;
         private int _minute;
-        private Clock _clock;
         private ICommand _clickUpHour;
         private ICommand _clickDownHour;
         private ICommand _clickUpMinute;
@@ -35,10 +34,12 @@ namespace AlarmClock.Models
 
         private bool _isActive;
         private bool _isVisible = true;
-        private bool _isStopped = false;
+
         #endregion
 
         #region properties
+        public Clock Clock { get; private set; }
+
         public List<AlarmItem> UserAlarms => _owner
             .Where(item => !item.IsBaseAlarm && item.IsVisible)
             .ToList();
@@ -73,7 +74,7 @@ namespace AlarmClock.Models
             }
         }
 
-        public bool IsBaseAlarm => _clock == null;
+        public bool IsBaseAlarm => Clock == null;
         public bool IsAddEnabled => IsBaseAlarm;
         public bool IsSaveEnabled => !IsBaseAlarm;
         public bool IsCancelEnabled => !IsBaseAlarm;
@@ -91,13 +92,13 @@ namespace AlarmClock.Models
             get => _isActive;
             set
             {
-                if (value && !UserAlarms.Any(item => item.IsActive) || !value)
-                {
-                    _isActive = value;
+                if ((!value || UserAlarms.Any(item => item.IsActive)) && value)
+                    return;
 
-                    OnPropertyChanged(nameof(IsEnabled));
-                    OnPropertyChanged(nameof(IsActive));
-                }
+                _isActive = value;
+
+                OnPropertyChanged(nameof(IsEnabled));
+                OnPropertyChanged(nameof(IsActive));
             }
         }
 
@@ -112,10 +113,8 @@ namespace AlarmClock.Models
             }
         }
 
-        public bool IsStopped => _isStopped;
+        public bool IsStopped { get; private set; }
         public bool IsEnabled => IsBaseAlarm || !IsActive;
-
-        public Clock Clock => _clock;
         #endregion
 
         #region commands
@@ -151,7 +150,7 @@ namespace AlarmClock.Models
             delegate
             {
                 if (IsActive)
-                    _isStopped = true;
+                    IsStopped = true;
                 IsActive = !IsActive;
             }));
         #endregion
@@ -196,7 +195,7 @@ namespace AlarmClock.Models
 
             v = newValue == -1 ? highBound : (newValue == highBound + 1 ? 0 : newValue);
 
-            _isStopped = false;
+            IsStopped = false;
 
             OnPropertyChanged(obj);
             OnPropertyChanged(nameof(IsAllowedTime));
@@ -222,7 +221,7 @@ namespace AlarmClock.Models
             {
                 _owner.Add(new AlarmItem(_owner, _clocks, _hour, _minute)
                 {
-                    _clock = _clocks.Add(new Clock(StationManager.CurrentUser))
+                    Clock = _clocks.Add(new Clock(StationManager.CurrentUser))
                 });
 
                 Rearrange();
@@ -241,19 +240,19 @@ namespace AlarmClock.Models
 
             for (int i = 1, j = 0; i < _owner.Count; i++)
             {
-                if (_owner[i].IsVisible)
-                {
-                    _owner[i] = sortedList[j];
+                if (!_owner[i].IsVisible)
+                    continue;
 
-                    if (j > 0)
-                        _owner[i].Clock.LastTriggered = GetNewClockTime(sortedList[j - 1]._hour, sortedList[j - 1]._minute);
+                _owner[i] = sortedList[j];
 
-                    if (j < sortedList.Count - 1)
-                        _owner[i].Clock.NextTrigger = GetNewClockTime(sortedList[j + 1]._hour, sortedList[j + 1]._minute);
+                if (j > 0)
+                    _owner[i].Clock.LastTriggered = GetNewClockTime(sortedList[j - 1]._hour, sortedList[j - 1]._minute);
 
-                    //(the same as above)_clocks[i - 1] = _owner[i].Clock;
-                    j++;
-                }
+                if (j < sortedList.Count - 1)
+                    _owner[i].Clock.NextTrigger = GetNewClockTime(sortedList[j + 1]._hour, sortedList[j + 1]._minute);
+
+                //(the same as above)_clocks[i - 1] = _owner[i].Clock;
+                j++;
             }
         }
 
@@ -264,8 +263,8 @@ namespace AlarmClock.Models
             return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
         }
 
-        private bool IsValidTime(string text, int param) =>
-            !Regex.IsMatch(text) && text.Length == 2 &&
-                int.Parse(text) >= 0 && int.Parse(text) <= param;
+        private bool IsValidTime(string time, int max) =>
+            !Regex.IsMatch(time) && time.Length == 2 &&
+                int.Parse(time) >= 0 && int.Parse(time) <= max;
     }
 }
