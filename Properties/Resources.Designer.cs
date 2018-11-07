@@ -61,7 +61,7 @@ namespace AlarmClock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Couldn&apos;t get user.
+        ///   Looks up a localized string similar to An error occured while trying to get user.
         /// </summary>
         internal static string CantGetUserError {
             get {

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CantGetUserError" xml:space="preserve">
-    <value>Couldn't get user</value>
+    <value>An error occured while trying to get user</value>
     <comment>The message to display when request for a user failed for some reason.</comment>
   </data>
   <data name="CantParseTimeError" xml:space="preserve">
