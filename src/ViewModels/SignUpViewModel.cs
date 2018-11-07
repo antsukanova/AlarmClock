@@ -85,20 +85,33 @@ namespace AlarmClock.ViewModels
             var userRepo = new UserRepository();
             var user = new User(Name, Surname, Login, Email, Password, DateTime.Now);
 
+            Logger.Log("User tried to sign up with credentials:" +
+                       $" Name - {Name}, Surname - {Surname}, Login - {Login}, Email - {Email}");
+
             if (!new EmailAddressAttribute().IsValid(Email))
             {
-                MessageBox.Show(string.Format(Resources.InvalidEmailError, Email));
+                var msg = string.Format(Resources.InvalidEmailError, Email);
+
+                MessageBox.Show(msg);
+                Logger.Log(msg);
+
                 return;
             }
 
             if (userRepo.Exists(user))
             {
-                MessageBox.Show(string.Format(Resources.UserAlreadyExistsError, Email, Login));
+                var msg = string.Format(Resources.UserAlreadyExistsError, Email, Login);
+
+                MessageBox.Show(msg);
+                Logger.Log(msg);
+
                 return;
             }
 
             userRepo.Add(user);
             StationManager.CurrentUser = user;
+
+            Logger.Log($"User {user.Login} was successfully signed up");
 
             NavigationManager.Navigate(Page.Main);
         }

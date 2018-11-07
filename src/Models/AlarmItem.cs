@@ -99,6 +99,8 @@ namespace AlarmClock.Models
 
                 OnPropertyChanged(nameof(IsEnabled));
                 OnPropertyChanged(nameof(IsActive));
+
+                Logger.Log($"Alarm clock {Clock.Id} started ringing.");
             }
         }
 
@@ -121,25 +123,25 @@ namespace AlarmClock.Models
         public ICommand ClickUpHour =>
             _clickUpHour ??
            (_clickUpHour = new RelayCommand(
-                delegate { ChangeAlarm(ref _hour, nameof(Hour), 1, MaxHours); }
+                delegate { ChangeAlarm(ref _hour, TimeProp.Hour, 1, MaxHours); }
             ));
 
         public ICommand ClickDownHour =>
             _clickDownHour ??
            (_clickDownHour = new RelayCommand(
-                delegate { ChangeAlarm(ref _hour, nameof(Hour), -1, MaxHours); }
+                delegate { ChangeAlarm(ref _hour, TimeProp.Hour, -1, MaxHours); }
            ));
 
         public ICommand ClickUpMinute =>
             _clickUpMinute ??
            (_clickUpMinute = new RelayCommand(
-               delegate { ChangeAlarm(ref _minute, nameof(Minute), 1, MaxMinutes); }
+               delegate { ChangeAlarm(ref _minute, TimeProp.Minute, 1, MaxMinutes); }
            ));
 
         public ICommand ClickDownMinute =>
             _clickDownMinute ??
            (_clickDownMinute = new RelayCommand(
-                delegate { ChangeAlarm(ref _minute, nameof(Minute), -1, MaxMinutes); }
+                delegate { ChangeAlarm(ref _minute, TimeProp.Minute, -1, MaxMinutes); }
            ));
 
         public ICommand AddAlarm => _addAlarm ?? (_addAlarm = new RelayCommand(AddAlarmExecute));
@@ -163,8 +165,9 @@ namespace AlarmClock.Models
             _minute = minute;
         }
 
-        private int GetTimeValue(AlarmItem ai) => ai._hour * MaxMinutes + ai._minute;
-        private int GetTimeValue(DateTime dt) => dt.Hour * MaxMinutes + dt.Minute;
+        private static int GetTimeValue(AlarmItem ai) => ai._hour * MaxMinutes + ai._minute;
+        private static int GetTimeValue(DateTime dt) => dt.Hour * MaxMinutes + dt.Minute;
+
         public bool Equals(DateTime dt) => GetTimeValue(dt) == GetTimeValue(this);
 
         private void DeleteAlarmExecute(object obj)
@@ -173,34 +176,54 @@ namespace AlarmClock.Models
 
             for (int i = 1, j = 0; i < _owner.Count; i++)
             {
-                if (_owner[i].IsVisible && _owner[i] != this)
-                {
-                    _owner[i].Clock.LastTriggered = j == 0 ? new DateTime() : userClocks[j - 1].NextTrigger;
+                if (!_owner[i].IsVisible || _owner[i] == this)
+                    continue;
 
-                    _owner[i].Clock.NextTrigger = j + 1 == userClocks.Count ? new DateTime() : userClocks[j + 1].LastTriggered;
+                _owner[i].Clock.LastTriggered = j == 0 ? new DateTime() : userClocks[j - 1].NextTrigger;
 
-//                    (in process for filter clocks in the same order as alarms)_clocks[i - 1] = _owner[i].Clock;
-                    j++;
-                }
+                _owner[i].Clock.NextTrigger = j + 1 == userClocks.Count ? new DateTime() : userClocks[j + 1].LastTriggered;
+
+                // (in process for filter clocks in the same order as alarms)_clocks[i - 1] = _owner[i].Clock;
+                j++;
             }
+
             _clocks.Delete(Clock.Id);
+            Logger.Log($"Alarm clock {Clock.Id} was deleted.");
+
             _owner.Remove(this);
 
             Update();
         }
 
-        private void ChangeAlarm(ref int v, string obj, int offset, byte highBound)
+        private void ChangeAlarm(ref int propValue, TimeProp property, int offset, byte highBound)
         {
-            var newValue = v + offset;
+            var newValue = propValue + offset;
 
-            v = newValue == -1 ? highBound : (newValue == highBound + 1 ? 0 : newValue);
+            propValue = newValue == -1 ? highBound : (newValue == highBound + 1 ? 0 : newValue);
 
             IsStopped = false;
 
-            OnPropertyChanged(obj);
+            OnPropertyChanged(property.ToString());
             OnPropertyChanged(nameof(IsAllowedTime));
 
             Update();
+
+            if (IsBaseAlarm)
+                return;
+
+            switch (property)
+            {
+                case TimeProp.Hour:
+                    Clock.NextTrigger = GetNewClockTime(newValue, _minute); // maybe should be replaced by Update() call
+                    break;
+                case TimeProp.Minute:
+                    Clock.NextTrigger = GetNewClockTime(_hour, newValue); // maybe should be replaced by Update() call
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(property), property, "Unknown TimeProp.");
+            }
+
+            Logger.Log($"Property {property.ToString()} of Alarm clock {Clock.Id} was updated to have value {propValue}.");
         }
 
         public void Update()
@@ -217,20 +240,31 @@ namespace AlarmClock.Models
 
         private void AddAlarmExecute(object obj)
         {
+            Logger.Log("Trying to add new Alarm Clock.");
+
             try
             {
+                var clock = new Clock(
+                    GetNewClockTime(_hour, _minute), DateTime.Now, StationManager.CurrentUser
+                );
+
                 _owner.Add(new AlarmItem(_owner, _clocks, _hour, _minute)
                 {
-                    Clock = _clocks.Add(new Clock(StationManager.CurrentUser))
+                    Clock = _clocks.Add(clock)
                 });
+
+                Logger.Log($"Alarm clock {clock.Id} with time {clock.NextTrigger} was successfully added" +
+                           $" by the User {StationManager.CurrentUser.Id}.");
 
                 Rearrange();
 
                 OnPropertyChanged(nameof(IsAllowedTime));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show(Resources.CantParseTimeError);
+                Logger.Log(ex, Resources.CantParseTimeError);
+                return;
             }
         }
 
@@ -258,13 +292,23 @@ namespace AlarmClock.Models
 
         private static DateTime GetNewClockTime(int hour, int minute)
         {
-            var tmpDate = DateTime.Now.AddDays(1);
+            var tmpDate = DateTime.Now;
+
+            // check if clock will NOT ring today
+            if (TimeSpan.Compare(tmpDate.TimeOfDay, new TimeSpan(hour, minute, tmpDate.Second)) >= 0)
+                tmpDate = tmpDate.AddDays(1);
 
             return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
         }
 
-        private bool IsValidTime(string time, int max) =>
+        private static bool IsValidTime(string time, int max) =>
             !Regex.IsMatch(time) && time.Length == 2 &&
                 int.Parse(time) >= 0 && int.Parse(time) <= max;
+    }
+
+    enum TimeProp
+    {
+        Hour,
+        Minute
     }
 }

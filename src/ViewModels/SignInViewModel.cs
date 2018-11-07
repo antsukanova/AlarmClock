@@ -51,31 +51,40 @@ namespace AlarmClock.ViewModels
             User user;
             var userRepo = new UserRepository();
 
+            Logger.Log($"User tried to sign in with email or login - {EmailOrLogin}.");
+
             try
             {
                 user = userRepo.Find(EmailOrLogin);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show(Resources.CantGetUserError);
+                Logger.Log(ex, Resources.CantGetUserError);
                 return;
             }
 
             if (user == null)
             {
-                MessageBox.Show(string.Format(Resources.UserDoesntExistError, EmailOrLogin));
+                var msg = string.Format(Resources.UserDoesntExistError, EmailOrLogin);
+
+                MessageBox.Show(msg);
+                Logger.Log(msg);
                 return;
             }
 
             if (!user.IsPasswordCorrect(Password))
             {
                 MessageBox.Show(Resources.WrongPasswordError);
+                Logger.Log(Resources.WrongPasswordError);
                 return;
             }
 
             userRepo.UpdateLastVisited(user);
 
             StationManager.CurrentUser = user;
+
+            Logger.Log($"User {user.Login} was successfully signed in.");
 
             NavigationManager.Navigate(Page.Main);
         }

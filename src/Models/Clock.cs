@@ -42,19 +42,13 @@ namespace AlarmClock.Models
         }
         #endregion
 
-        #region constructor
+        #region constructors
         public Clock(DateTime lastTriggered, DateTime nextTrigger, User owner)
         {
             Id = Guid.NewGuid();
 
             LastTriggered = lastTriggered;
             NextTrigger = nextTrigger;
-            Owner = owner;
-        }
-
-        public Clock(User owner)
-        {
-            Id = Guid.NewGuid();
             Owner = owner;
         }
         #endregion
