@@ -1,20 +1,11 @@
-﻿using AlarmClock.Models;
+﻿using AlarmClock.Annotations;
+using AlarmClock.Models;
 
 namespace AlarmClock.Managers
 {
     public static class StationManager
     {
-        private static User _currentUser;
-
-        public static User CurrentUser
-        {
-            get => _currentUser;
-            set
-            {
-                _currentUser = value;
-                SerializationManager.SerializeCurrentUser();
-            }
-        }
+        public static User CurrentUser { get; private set; }
 
         static StationManager()
         {
@@ -27,5 +18,16 @@ namespace AlarmClock.Managers
             }
         }
 
+        public static void Authorize([NotNull] User user)
+        {
+            CurrentUser = user;
+            SerializationManager.SerializeCurrentUser();
+        }
+
+        public static void SignOut()
+        {
+            CurrentUser = null;
+            SerializationManager.ClearSerializedLastUser();
+        }
     }
 }

@@ -44,12 +44,6 @@ namespace AlarmClock.ViewModels
         public ICommand ToSignUp => _toSignUp ?? (_toSignUp = new RelayCommand(ToSignUpExecute));
         #endregion
 
-        public SignInViewModel()
-        {
-            if (StationManager.CurrentUser != null)
-                AfterSignIn();
-        }
-
         private static void ToSignUpExecute(object obj) => NavigationManager.Navigate(Page.SignUp);
 
         private void SignInExecute(object obj)
@@ -89,13 +83,19 @@ namespace AlarmClock.ViewModels
             userRepo.Update(user.UpdateLastVisit());
             Logger.Log($"User {user.Login} last visit time was successfully updated.");
 
-            StationManager.CurrentUser = user;
+            StationManager.Authorize(user);
             Logger.Log($"User {user.Login} was successfully signed in.");
 
             AfterSignIn();
         }
 
         private void AfterSignIn() => NavigationManager.Navigate(Page.Main);
+
+        internal void CheckCurrentUser()
+        {
+            if (StationManager.CurrentUser != null)
+                AfterSignIn();
+        }
 
         private bool SignInCanExecute(object obj) 
             => !(string.IsNullOrWhiteSpace(EmailOrLogin) || string.IsNullOrWhiteSpace(Password));

@@ -58,9 +58,7 @@ namespace AlarmClock.ViewModels
 
             Logger.Log($"User {CurrentUser.Login} was successfully signed out.");
 
-            StationManager.CurrentUser = null;
-
-            SerializationManager.ClearSerializedLastUser();
+            StationManager.SignOut();
 
             NavigationManager.Navigate(Page.SignIn);
         }

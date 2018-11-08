@@ -111,8 +111,7 @@ namespace AlarmClock.ViewModels
             userRepo.Add(user);
             Logger.Log($"User {user.Login} was successfully added to the db.");
 
-            StationManager.CurrentUser = user;
-
+            StationManager.Authorize(user);
             Logger.Log($"User {user.Login} was successfully signed up");
 
             NavigationManager.Navigate(Page.Main);
