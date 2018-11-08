@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
 
@@ -111,17 +110,19 @@ namespace AlarmClock.ViewModels
             userRepo.Add(user);
             Logger.Log($"User {user.Login} was successfully added to the db.");
 
+            SerializationManager.SerializeUsers(userRepo);
+
             StationManager.Authorize(user);
             Logger.Log($"User {user.Login} was successfully signed up");
 
             NavigationManager.Navigate(Page.Main);
         }
 
-        private bool SignUpCanExecute(object obj)
-            => !(string.IsNullOrWhiteSpace(Name)    ||
-                 string.IsNullOrWhiteSpace(Surname) ||
-                 string.IsNullOrWhiteSpace(Email)   ||
-                 string.IsNullOrWhiteSpace(Login)   ||
-                 string.IsNullOrWhiteSpace(Password));
+        private bool SignUpCanExecute(object obj) => 
+           !(string.IsNullOrWhiteSpace(Name)    ||
+             string.IsNullOrWhiteSpace(Surname) ||
+             string.IsNullOrWhiteSpace(Email)   ||
+             string.IsNullOrWhiteSpace(Login)   ||
+             string.IsNullOrWhiteSpace(Password));
     }
 }

@@ -58,11 +58,11 @@ namespace AlarmClock.Managers
         #endregion
 
         #region Alarms
-        public static void SerializeAlarms()
+        public static void SerializeAlarms(IClockRepository repo)
         {
             try
             {
-                SerializationHelper.Serialize(new ClockRepository().All(), FileFolderHelper.AlarmsFilePath);
+                SerializationHelper.Serialize(repo.All(), FileFolderHelper.AlarmsFilePath);
                 Logger.Log("Alarm clocks were successfully serialized.");
             }
             catch (Exception ex)
@@ -89,11 +89,11 @@ namespace AlarmClock.Managers
         #endregion
 
         #region Users
-        public static void SerializeUsers()
+        public static void SerializeUsers(IUserRepository repo)
         {
             try
             {
-                SerializationHelper.Serialize(new UserRepository().All(), FileFolderHelper.UsersFilePath);
+                SerializationHelper.Serialize(repo.All(), FileFolderHelper.UsersFilePath);
                 Logger.Log("Users were successfully serialized.");
             }
             catch (Exception ex)
