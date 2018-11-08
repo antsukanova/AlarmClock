@@ -36,17 +36,15 @@ namespace AlarmClock.ViewModels
 
         public ClockRepository Clocks { get; } = new ClockRepository();
 
-        public User CurrentUser => StationManager.CurrentUser;
+        public static User CurrentUser => StationManager.CurrentUser;
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
 
-        private AlarmItem BaseAlarm => AlarmClocks.Where(item => item.IsBaseAlarm).Single();
+        private AlarmItem BaseAlarm => AlarmClocks.Single(item => item.IsBaseAlarm);
 
         public void Changed()
         {
-            OnPropertyChanged(nameof(CurrentUser));
-
-            foreach (AlarmItem ai in AlarmClocks.Where(item => item != BaseAlarm))
+            foreach (var ai in AlarmClocks.Where(item => item != BaseAlarm))
                 ai.IsVisible = ai.Clock.Owner == (StationManager.CurrentUser ?? ai.Clock.Owner);
 
             BaseAlarm.Update();
@@ -57,6 +55,8 @@ namespace AlarmClock.ViewModels
         private void SignOutExecute(object obj)
         {
             BaseAlarm.Rearrange();
+
+            Logger.Log($"User {CurrentUser.Login} was successfully signed out.");
 
             StationManager.CurrentUser = null;
 
@@ -74,11 +74,14 @@ namespace AlarmClock.ViewModels
 
             SetTimer().Start();
             CheckAlarm().Start();
+
+            // TODO: Actually load clocks for the User
+            Logger.Log($"Loaded Alarm clocks for User {CurrentUser.Login}.");
         }
 
         private DispatcherTimer SetTimer()
         {
-            var timer = new DispatcherTimer()
+            var timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(1)
             };
@@ -93,20 +96,27 @@ namespace AlarmClock.ViewModels
 
         private DispatcherTimer CheckAlarm()
         {
-            var timer = new DispatcherTimer()
+            var timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(200)
             };
 
             timer.Tick += delegate
             {
-                DateTime dt = DateTime.Now;
-                var userAlarms = AlarmClocks[0].UserAlarms;
+                var dt = DateTime.Now;
+                var alarms = AlarmClocks[0].UserAlarms;
 
-                foreach (AlarmItem ai in userAlarms)
+                if (alarms.Any(item => item.IsActive))
+                    return;
+
+                foreach (var ai in alarms)
                 {
-                    if (ai.Equals(dt) && !ai.IsStopped && !userAlarms.Any(item => item.IsActive))
-                        ai.IsActive = true;
+                    if (!ai.Equals(dt) || ai.IsStopped)
+                        continue;
+
+                    ai.IsActive = true;
+                    ai.Clock.LastTriggered = DateTime.Now;
+                    break;
                 }
             };
 
