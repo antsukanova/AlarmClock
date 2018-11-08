@@ -60,6 +60,8 @@ namespace AlarmClock.ViewModels
 
             StationManager.CurrentUser = null;
 
+            SerializationManager.ClearSerializedLastUser();
+
             NavigationManager.Navigate(Page.SignIn);
         }
         #endregion

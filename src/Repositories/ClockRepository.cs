@@ -10,6 +10,8 @@ namespace AlarmClock.Repositories
     {
         private static readonly List<Clock> Clocks = new List<Clock>();
 
+        public List<Clock> All() => Clocks;
+
         public bool Exists(Clock clock) =>
             Clocks
                 .Any(c => c.NextTrigger == clock.NextTrigger &&

@@ -44,6 +44,12 @@ namespace AlarmClock.ViewModels
         public ICommand ToSignUp => _toSignUp ?? (_toSignUp = new RelayCommand(ToSignUpExecute));
         #endregion
 
+        public SignInViewModel()
+        {
+            if (StationManager.CurrentUser != null)
+                AfterSignIn();
+        }
+
         private static void ToSignUpExecute(object obj) => NavigationManager.Navigate(Page.SignUp);
 
         private void SignInExecute(object obj)
@@ -86,8 +92,10 @@ namespace AlarmClock.ViewModels
 
             Logger.Log($"User {user.Login} was successfully signed in.");
 
-            NavigationManager.Navigate(Page.Main);
+            AfterSignIn();
         }
+
+        private void AfterSignIn() => NavigationManager.Navigate(Page.Main);
 
         private bool SignInCanExecute(object obj) 
             => !(string.IsNullOrWhiteSpace(EmailOrLogin) || string.IsNullOrWhiteSpace(Password));

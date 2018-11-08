@@ -9,6 +9,8 @@ namespace AlarmClock.Repositories
     {
         private static readonly List<User> Users = new List<User>();
 
+        public List<User> All() => Users;
+
         public User Find(string emailOrLogin)
         {
             return Users.FirstOrDefault(u => u.Email == emailOrLogin || u.Login == emailOrLogin);

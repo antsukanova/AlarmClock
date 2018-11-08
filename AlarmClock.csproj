@@ -97,6 +97,7 @@
     <Compile Include="src\Managers\SerializationManager.cs" />
     <Compile Include="src\Misc\FileFolderHelper.cs" />
     <Compile Include="src\Misc\Logger.cs" />
+    <Compile Include="src\Misc\SerializationHelper.cs" />
     <Compile Include="tests\SignUpTest.cs" />
     <Compile Include="tests\SignInTest.cs" />
     <Page Include="src\Views\MainView.xaml">
