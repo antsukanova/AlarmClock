@@ -80,7 +80,7 @@
                     </StackPanel>
                     <Button Style="{StaticResource ToolButton}" Command="{Binding DeleteAlarm}"
                         ToolTip="Delete alarm" VerticalAlignment="Top" Margin="10,0,0,0"
-                        Opacity="{Binding IsSaveEnabled}">
+                        Opacity="{Binding IsDeleteEnabled}">
                         <Image Source="/AlarmClock;component/resources/btns/delete.png" Height="16"/>
                     </Button>
                 </StackPanel>

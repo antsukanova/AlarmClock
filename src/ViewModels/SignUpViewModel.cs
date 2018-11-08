@@ -113,7 +113,6 @@ namespace AlarmClock.ViewModels
             SerializationManager.SerializeUsers(userRepo);
 
             StationManager.Authorize(user);
-            Logger.Log($"User {user.Login} was successfully signed up");
 
             NavigationManager.Navigate(Page.Main);
         }

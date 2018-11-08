@@ -84,7 +84,6 @@ namespace AlarmClock.ViewModels
             Logger.Log($"User {user.Login} last visit time was successfully updated.");
 
             StationManager.Authorize(user);
-            Logger.Log($"User {user.Login} was successfully signed in.");
 
             AfterSignIn();
         }
@@ -97,7 +96,7 @@ namespace AlarmClock.ViewModels
                 AfterSignIn();
         }
 
-        private bool SignInCanExecute(object obj) 
-            => !(string.IsNullOrWhiteSpace(EmailOrLogin) || string.IsNullOrWhiteSpace(Password));
+        private bool SignInCanExecute(object obj) =>
+            !(string.IsNullOrWhiteSpace(EmailOrLogin) || string.IsNullOrWhiteSpace(Password));
     }
 }

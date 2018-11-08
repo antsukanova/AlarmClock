@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using AlarmClock.Managers;
 using AlarmClock.Models;
 
 namespace AlarmClock.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private static readonly List<User> Users = new List<User>();
+        private static readonly List<User> Users;
+
+        static UserRepository() => Users = SerializationManager.DeserializeUsers() ?? new List<User>();
 
         public List<User> All() => Users;
 

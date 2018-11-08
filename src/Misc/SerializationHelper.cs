@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace AlarmClock.Misc
@@ -8,32 +7,16 @@ namespace AlarmClock.Misc
     {
         public static void Serialize<T>(T obj, string filePath)
         {
-            try
-            {
-                FileFolderHelper.CheckAndCreateFile(filePath);
+            FileFolderHelper.CheckAndCreateFile(filePath);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    new BinaryFormatter().Serialize(stream, obj);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(ex, $"Failed to serialize data to file - {filePath}.");
-                throw;
-            }
+            using (var stream = new FileStream(filePath, FileMode.Create))
+                new BinaryFormatter().Serialize(stream, obj);
         }
 
         public static T Deserialize<T>(string filePath) where T : class
         {
-            try
-            {
-                using (var stream = new FileStream(filePath, FileMode.Open))
-                    return (T) new BinaryFormatter().Deserialize(stream);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(ex, $"Failed to deserialize data from file - {filePath}.");
-                throw;
-            }
+            using (var stream = new FileStream(filePath, FileMode.Open))
+                return (T) new BinaryFormatter().Deserialize(stream);
         }
     }
 }

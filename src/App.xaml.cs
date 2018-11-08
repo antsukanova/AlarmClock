@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 
+using AlarmClock.Managers;
 using AlarmClock.Misc;
+using AlarmClock.Repositories;
 
 namespace AlarmClock
 {
@@ -8,6 +10,10 @@ namespace AlarmClock
     {
         private AlarmClockApp() => Logger.Log("App started.");
 
-        private void OnExit(object sender, ExitEventArgs e) => Logger.Log("App closed.");
+        private void OnExit(object sender, ExitEventArgs e)
+        {
+            SerializationManager.SerializeAlarms(new ClockRepository());
+            Logger.Log("App closed.");
+        }
     }
 }

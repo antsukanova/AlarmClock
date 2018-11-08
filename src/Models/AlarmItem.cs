@@ -76,8 +76,8 @@ namespace AlarmClock.Models
 
         public bool IsBaseAlarm => Clock == null;
         public bool IsAddEnabled => IsBaseAlarm;
-        public bool IsSaveEnabled => !IsBaseAlarm;
-        public bool IsCancelEnabled => !IsBaseAlarm;
+        public bool IsSaveEnabled => !IsBaseAlarm; // ???
+        public bool IsCancelEnabled => !IsBaseAlarm; // ???
         public bool IsBellEnabled => !IsBaseAlarm;
         public bool IsDeleteEnabled => !IsBaseAlarm;
 
@@ -264,7 +264,6 @@ namespace AlarmClock.Models
             {
                 MessageBox.Show(Resources.CantParseTimeError);
                 Logger.Log(ex, Resources.CantParseTimeError);
-                return;
             }
         }
 

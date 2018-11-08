@@ -16,7 +16,7 @@ namespace AlarmClock.Managers
             try
             {
                 SerializationHelper.Serialize(StationManager.CurrentUser, FileFolderHelper.LastUserFilePath);
-                Logger.Log("Last user was successfully serialized.");
+                Logger.Log("Current user was successfully serialized.");
             }
             catch (Exception ex)
             {
