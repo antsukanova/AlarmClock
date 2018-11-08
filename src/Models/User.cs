@@ -3,19 +3,23 @@ using AlarmClock.Misc;
 
 namespace AlarmClock.Models
 {
-    public class User : NotifyPropertyChanged
+    [Serializable]
+    public class User
     {
-        public  Guid Id { get; }
-        private string _name;
-        private string _surname;
-        private string _login;
-        private string _email;
-        public  string Password { get; }
-        public  string Salt { get; }
-        private DateTime _lastVisited;
+        #region properites
+        public Guid Id { get; }
+        public string Password { get; }
+        public string Salt { get; }
+        public string Name { get; }
+        public string Surname { get; }
+        public string Login { get; }
+        public string Email { get; }
+        public DateTime LastVisited { get; private set; }
 
-        #region constructor
-        public User(
+        #endregion
+
+        #region constructors
+        internal User(
             string name, string surname, string login, string email, string password,
             DateTime lastVisited
         )
@@ -30,64 +34,23 @@ namespace AlarmClock.Models
             var hashObj = Encrypter.Encode(password);
 
             Password = hashObj.Hash;
-            Salt     = hashObj.Salt;
+            Salt = hashObj.Salt;
 
             LastVisited = lastVisited;
         }
-        #endregion
 
-        #region properites
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-
-        public string Surname
-        {
-            get => _surname;
-            set
-            {
-                _surname = value;
-                OnPropertyChanged(nameof(Surname));
-            }
-        }
-
-        public string Login
-        {
-            get => _login;
-            set
-            {
-                _login = value;
-                OnPropertyChanged(nameof(Login));
-            }
-        }
-
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged(nameof(Email));
-            }
-        }
-
-        public DateTime LastVisited
-        {
-            get => _lastVisited;
-            set
-            {
-                _lastVisited = value;
-                OnPropertyChanged(nameof(LastVisited));
-            }
-        }
+        public User(
+            string name, string surname, string login, string email, string password
+        ) : this(name, surname, login, email, password, DateTime.Now)
+        {}
         #endregion
 
         public bool IsPasswordCorrect(string password) => Encrypter.Hash(Salt + password).Equals(Password);
+
+        public User UpdateLastVisit()
+        {
+            LastVisited = DateTime.Now;
+            return this;
+        }
     }
 }

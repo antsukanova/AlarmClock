@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using AlarmClock.Managers;
 using AlarmClock.Models;
 
 namespace AlarmClock.Repositories
 {
     public class ClockRepository : IClockRepository
     {
-        private static readonly List<Clock> Clocks = new List<Clock>();
+        private static readonly List<Clock> Clocks;
+
+        static ClockRepository() => Clocks = SerializationManager.DeserializeAlarms() ?? new List<Clock>();
+
+        public List<Clock> All() => Clocks;
 
         public bool Exists(Clock clock) =>
             Clocks

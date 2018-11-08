@@ -8,18 +8,21 @@ namespace AlarmClock.Misc
         private static readonly string AppDataPath =
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-        internal static readonly string ClientFolderPath =
+        private static readonly string ClientFolderPath =
             Path.Combine(AppDataPath, "AlarmClock");
 
-        internal static readonly string LogFolderPath =
+        private static readonly string LogFolderPath =
             Path.Combine(ClientFolderPath, "Log");
 
         internal static readonly string LogFilepath = Path.Combine(
             LogFolderPath, $"Logs_{DateTime.Now:yyyy_MM_dd}.txt"
         );
 
-        internal static readonly string UserAlarmsFilePath =
-            Path.Combine(ClientFolderPath, "UserAlarms.alcl");
+        internal static readonly string AlarmsFilePath =
+            Path.Combine(ClientFolderPath, "Alarms.alcl");
+
+        internal static readonly string UsersFilePath =
+            Path.Combine(ClientFolderPath, "Users.alcl");
 
         internal static readonly string LastUserFilePath =
             Path.Combine(ClientFolderPath, "LastUser.alcl");

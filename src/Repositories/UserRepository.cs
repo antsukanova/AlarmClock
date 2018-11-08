@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using AlarmClock.Managers;
 using AlarmClock.Models;
 
 namespace AlarmClock.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private static readonly List<User> Users = new List<User>();
+        private static readonly List<User> Users;
+
+        static UserRepository() => Users = SerializationManager.DeserializeUsers() ?? new List<User>();
+
+        public List<User> All() => Users;
 
         public User Find(string emailOrLogin)
         {
@@ -26,11 +31,6 @@ namespace AlarmClock.Repositories
             return user;
         }
 
-        public User UpdateLastVisited(User user)
-        {
-            Users.First(u => u.Id == user.Id).LastVisited = user.LastVisited = DateTime.Now;
-
-            return user;
-        }
+        public User Update(User user) => Users[Users.FindIndex(u => u.Id == user.Id)] = user;
     }
 }

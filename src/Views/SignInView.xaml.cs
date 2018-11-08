@@ -14,10 +14,9 @@ namespace AlarmClock.Views
             DataContext = new SignInViewModel();
         }
 
-        private void PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (DataContext != null)
-                ((dynamic)DataContext).Password = ((PasswordBox)sender).Password;
-        }
+        internal void CheckCurrentUser() => ((SignInViewModel) DataContext).CheckCurrentUser();
+
+        private void PasswordChanged(object sender, RoutedEventArgs e) =>
+            ((SignInViewModel)DataContext).Password = Password.Password;
     }
 }

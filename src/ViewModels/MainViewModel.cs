@@ -56,9 +56,7 @@ namespace AlarmClock.ViewModels
         {
             BaseAlarm.Rearrange();
 
-            Logger.Log($"User {CurrentUser.Login} was successfully signed out.");
-
-            StationManager.CurrentUser = null;
+            StationManager.SignOut();
 
             NavigationManager.Navigate(Page.SignIn);
         }

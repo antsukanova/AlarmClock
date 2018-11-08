@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
 
@@ -83,7 +82,7 @@ namespace AlarmClock.ViewModels
         private void SignUpExecute(object obj)
         {
             var userRepo = new UserRepository();
-            var user = new User(Name, Surname, Login, Email, Password, DateTime.Now);
+            var user = new User(Name, Surname, Login, Email, Password);
 
             Logger.Log("User tried to sign up with credentials:" +
                        $" Name - {Name}, Surname - {Surname}, Login - {Login}, Email - {Email}");
@@ -109,18 +108,20 @@ namespace AlarmClock.ViewModels
             }
 
             userRepo.Add(user);
-            StationManager.CurrentUser = user;
+            Logger.Log($"User {user.Login} was successfully added to the db.");
 
-            Logger.Log($"User {user.Login} was successfully signed up");
+            SerializationManager.SerializeUsers(userRepo);
+
+            StationManager.Authorize(user);
 
             NavigationManager.Navigate(Page.Main);
         }
 
-        private bool SignUpCanExecute(object obj)
-            => !(string.IsNullOrWhiteSpace(Name)    ||
-                 string.IsNullOrWhiteSpace(Surname) ||
-                 string.IsNullOrWhiteSpace(Email)   ||
-                 string.IsNullOrWhiteSpace(Login)   ||
-                 string.IsNullOrWhiteSpace(Password));
+        private bool SignUpCanExecute(object obj) => 
+           !(string.IsNullOrWhiteSpace(Name)    ||
+             string.IsNullOrWhiteSpace(Surname) ||
+             string.IsNullOrWhiteSpace(Email)   ||
+             string.IsNullOrWhiteSpace(Login)   ||
+             string.IsNullOrWhiteSpace(Password));
     }
 }

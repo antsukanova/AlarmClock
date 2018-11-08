@@ -1,45 +1,18 @@
 ﻿using System;
-using AlarmClock.Misc;
 
 namespace AlarmClock.Models
 {
-    public class Clock : NotifyPropertyChanged
+    [Serializable]
+    public class Clock
     {
-        public  Guid Id { get; }
-        private DateTime _lastTriggered;
-        private DateTime _nextTrigger;
-        private User     _owner;
-
         #region properites
-        public DateTime LastTriggered
-        {
-            get => _lastTriggered;
-            set
-            {
-                _lastTriggered = value;
-                OnPropertyChanged(nameof(LastTriggered));
-            }
-        }
+        public  Guid Id { get; }
 
-        public DateTime NextTrigger
-        {
-            get => _nextTrigger;
-            set
-            {
-                _nextTrigger = value;
-                OnPropertyChanged(nameof(NextTrigger));
-            }
-        }
+        public DateTime LastTriggered { get; set; }
 
-        public User Owner
-        {
-            get => _owner;
-            set
-            {
-                _owner = value;
-                OnPropertyChanged(nameof(Owner));
-            }
-        }
+        public DateTime NextTrigger { get; set; }
+
+        public User Owner { get; }
         #endregion
 
         #region constructors

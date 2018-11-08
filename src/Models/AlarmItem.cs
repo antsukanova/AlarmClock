@@ -20,7 +20,7 @@ namespace AlarmClock.Models
         private const byte MaxHours = (byte) (TimeSpan.TicksPerDay / TimeSpan.TicksPerHour) - 1;
 
         private readonly ObservableCollection<AlarmItem> _owner;
-        private readonly ClockRepository _clocks;
+        private readonly IClockRepository _clocks;
 
         private int _hour;
         private int _minute;
@@ -76,8 +76,8 @@ namespace AlarmClock.Models
 
         public bool IsBaseAlarm => Clock == null;
         public bool IsAddEnabled => IsBaseAlarm;
-        public bool IsSaveEnabled => !IsBaseAlarm;
-        public bool IsCancelEnabled => !IsBaseAlarm;
+        public bool IsSaveEnabled => !IsBaseAlarm; // ???
+        public bool IsCancelEnabled => !IsBaseAlarm; // ???
         public bool IsBellEnabled => !IsBaseAlarm;
         public bool IsDeleteEnabled => !IsBaseAlarm;
 
@@ -157,7 +157,7 @@ namespace AlarmClock.Models
             }));
         #endregion
 
-        public AlarmItem(ObservableCollection<AlarmItem> owner, ClockRepository clocks, int hour, int minute)
+        public AlarmItem(ObservableCollection<AlarmItem> owner, IClockRepository clocks, int hour, int minute)
         {
             _owner = owner;
             _clocks = clocks;
@@ -264,7 +264,6 @@ namespace AlarmClock.Models
             {
                 MessageBox.Show(Resources.CantParseTimeError);
                 Logger.Log(ex, Resources.CantParseTimeError);
-                return;
             }
         }
 
