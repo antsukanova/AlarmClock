@@ -83,7 +83,7 @@ namespace AlarmClock.ViewModels
         private void SignUpExecute(object obj)
         {
             var userRepo = new UserRepository();
-            var user = new User(Name, Surname, Login, Email, Password, DateTime.Now);
+            var user = new User(Name, Surname, Login, Email, Password);
 
             Logger.Log("User tried to sign up with credentials:" +
                        $" Name - {Name}, Surname - {Surname}, Login - {Login}, Email - {Email}");
@@ -109,6 +109,8 @@ namespace AlarmClock.ViewModels
             }
 
             userRepo.Add(user);
+            Logger.Log($"User {user.Login} was successfully added to the db.");
+
             StationManager.CurrentUser = user;
 
             Logger.Log($"User {user.Login} was successfully signed up");

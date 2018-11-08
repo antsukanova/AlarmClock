@@ -26,11 +26,6 @@ namespace AlarmClock.Repositories
             return user;
         }
 
-        public User UpdateLastVisited(User user)
-        {
-            Users.First(u => u.Id == user.Id).LastVisited = user.LastVisited = DateTime.Now;
-
-            return user;
-        }
+        public User Update(User user) => Users[Users.FindIndex(u => u.Id == user.Id)] = user;
     }
 }

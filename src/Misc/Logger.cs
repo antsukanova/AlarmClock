@@ -26,7 +26,7 @@ namespace AlarmClock.Misc
                 }
                 catch
                 {
-                    // ignored. maybe we could do comething?
+                    // ignored. maybe we could do something?
                 }
                 finally
                 {

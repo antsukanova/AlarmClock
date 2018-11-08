@@ -10,6 +10,6 @@ namespace AlarmClock.Repositories
 
         User Add(User user);
 
-        User UpdateLastVisited(User user);
+        User Update(User user);
     }
 }

@@ -80,10 +80,10 @@ namespace AlarmClock.ViewModels
                 return;
             }
 
-            userRepo.UpdateLastVisited(user);
+            userRepo.Update(user.UpdateLastVisit());
+            Logger.Log($"User {user.Login} last visit time was successfully updated.");
 
             StationManager.CurrentUser = user;
-
             Logger.Log($"User {user.Login} was successfully signed in.");
 
             NavigationManager.Navigate(Page.Main);
