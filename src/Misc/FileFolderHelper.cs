@@ -18,8 +18,11 @@ namespace AlarmClock.Misc
             LogFolderPath, $"Logs_{DateTime.Now:yyyy_MM_dd}.txt"
         );
 
-        internal static readonly string UserAlarmsFilePath =
-            Path.Combine(ClientFolderPath, "UserAlarms.alcl");
+        internal static readonly string AlarmsFilePath =
+            Path.Combine(ClientFolderPath, "Alarms.alcl");
+
+        internal static readonly string UsersFilePath =
+            Path.Combine(ClientFolderPath, "Users.alcl");
 
         internal static readonly string LastUserFilePath =
             Path.Combine(ClientFolderPath, "LastUser.alcl");

@@ -1,40 +1,122 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+
 using AlarmClock.Misc;
+using AlarmClock.Models;
+using AlarmClock.Repositories;
 
 namespace AlarmClock.Managers
 {
     public static class SerializationManager
     {
-        public static void Serialize<T>(T obj, string filePath)
+    #region Last User
+        public static void SerializeCurrentUser()
         {
             try
             {
-                FileFolderHelper.CheckAndCreateFile(filePath);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    new BinaryFormatter().Serialize(stream, obj);
+                SerializationHelper.Serialize(StationManager.CurrentUser, FileFolderHelper.LastUserFilePath);
+                Logger.Log("Last user was successfully serialized.");
             }
             catch (Exception ex)
             {
-                Logger.Log(ex, $"Failed to serialize data to file - {filePath}.");
-                throw;
+                Logger.Log(ex, "Failed to serialize current user.");
             }
         }
 
-        public static T Deserialize<T>(string filePath) where T : class
+        public static User DeserializeLastUser()
         {
+            User user = null;
+
             try
             {
-                using (var stream = new FileStream(filePath, FileMode.Open))
-                    return (T) new BinaryFormatter().Deserialize(stream);
+                user = SerializationHelper.Deserialize<User>(FileFolderHelper.LastUserFilePath);
+                Logger.Log("Last user was successfully deserialized.");
             }
             catch (Exception ex)
             {
-                Logger.Log(ex, $"Failed to deserialize data from file - {filePath}.");
+                Logger.Log(ex, "Failed to deserialize last User.");
+            }
+
+            return user;
+        }
+
+        public static void ClearSerializedLastUser()
+        {
+            try
+            {
+                using (var stream = new FileStream(FileFolderHelper.LastUserFilePath, FileMode.Open))
+                    stream.SetLength(0);
+
+                Logger.Log("Serialized last user was successfully cleared.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, "Failed to clear serialized last User.");
+            }
+        }
+        #endregion
+
+        #region Alarms
+        public static void SerializeAlarms()
+        {
+            try
+            {
+                SerializationHelper.Serialize(new ClockRepository().All(), FileFolderHelper.AlarmsFilePath);
+                Logger.Log("Alarm clocks were successfully serialized.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, "Failed to serialize alarm clocks.");
+            }
+        }
+
+        public static List<Clock> DeserializeAlarms()
+        {
+            try
+            {
+                var clocks = SerializationHelper.Deserialize<List<Clock>>(FileFolderHelper.AlarmsFilePath);
+                Logger.Log("Alarm clocks were successfully deserialized.");
+
+                return clocks;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, "Failed to deserialize alarm clocks.");
                 return null;
             }
         }
+        #endregion
+
+        #region Users
+        public static void SerializeUsers()
+        {
+            try
+            {
+                SerializationHelper.Serialize(new UserRepository().All(), FileFolderHelper.UsersFilePath);
+                Logger.Log("Users were successfully serialized.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, "Failed to serialize users.");
+            }
+        }
+
+        public static List<User> DeserializeUsers()
+        {
+            try
+            {
+                var users = SerializationHelper.Deserialize<List<User>>(FileFolderHelper.UsersFilePath);
+                Logger.Log("Users were successfully deserialized.");
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, "Failed to deserialize users.");
+                return null;
+            }
+        }
+        #endregion
     }
 }
