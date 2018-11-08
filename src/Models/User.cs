@@ -3,6 +3,7 @@ using AlarmClock.Misc;
 
 namespace AlarmClock.Models
 {
+    [Serializable]
     public class User
     {
         #region properites

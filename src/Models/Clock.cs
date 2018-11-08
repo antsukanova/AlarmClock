@@ -2,6 +2,7 @@
 
 namespace AlarmClock.Models
 {
+    [Serializable]
     public class Clock
     {
         #region properites

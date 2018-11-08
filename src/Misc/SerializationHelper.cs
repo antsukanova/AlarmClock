@@ -32,7 +32,7 @@ namespace AlarmClock.Misc
             catch (Exception ex)
             {
                 Logger.Log(ex, $"Failed to deserialize data from file - {filePath}.");
-                return null;
+                throw;
             }
         }
     }
