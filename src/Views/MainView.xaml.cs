@@ -1,7 +1,9 @@
 ﻿using AlarmClock.ViewModels;
 
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Linq;
 
 namespace AlarmClock.Views
 {
@@ -13,7 +15,7 @@ namespace AlarmClock.Views
             DataContext = new MainViewModel();
         }
 
-        private void KeyDownHandler(object sender, KeyEventArgs e)
+        private void KeyDownHandler(object sender, KeyEventArgs e)//to VM
         {
             var myCaretIndex = ((TextBox)sender).CaretIndex;
             var characters   = ((TextBox)sender).Text.ToCharArray();
@@ -27,6 +29,13 @@ namespace AlarmClock.Views
             ((TextBox)sender).CaretIndex = myCaretIndex + 1;
 
             e.Handled = true;
+        }
+
+        private void StoryboardCompleted(object sender, EventArgs e)
+        {
+            var alarm = ((MainViewModel)DataContext).AlarmClocks.SingleOrDefault(item => item.IsActive);
+            if (alarm != null)
+                alarm.IsStopped = true;
         }
     }
 }

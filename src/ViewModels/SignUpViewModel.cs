@@ -10,7 +10,7 @@ using AlarmClock.Repositories;
 
 namespace AlarmClock.ViewModels
 {
-    class SignUpViewModel : NotifyPropertyChanged
+    internal class SignUpViewModel : NotifyPropertyChanged
     {
         private string _name;
         private string _surname;

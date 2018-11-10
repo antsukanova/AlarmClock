@@ -15,6 +15,11 @@ namespace AlarmClock.Models
     public class AlarmItem : NotifyPropertyChanged
     {
         #region attributes
+        private enum TimeProp
+        {
+            Hour,
+            Minute
+        }
         private static readonly Regex Regex = new Regex("[^0-9.-]+");
         private const byte MaxMinutes = (byte) (TimeSpan.TicksPerMinute / TimeSpan.TicksPerSecond) - 1;
         private const byte MaxHours = (byte) (TimeSpan.TicksPerDay / TimeSpan.TicksPerHour) - 1;
@@ -30,10 +35,10 @@ namespace AlarmClock.Models
         private ICommand _clickDownMinute;
         private ICommand _addAlarm;
         private ICommand _deleteAlarm;
-        private ICommand _bellAlarm;
+        private ICommand _ringAlarm;
 
         private bool _isActive;
-        private bool _isVisible = true;
+        private bool _isStopped;
 
         #endregion
 
@@ -41,7 +46,7 @@ namespace AlarmClock.Models
         public Clock Clock { get; private set; }
 
         public List<AlarmItem> UserAlarms => _owner
-            .Where(item => !item.IsBaseAlarm && item.IsVisible)
+            .Where(item => !item.IsBaseAlarm)
             .ToList();
 
         public string Hour
@@ -55,7 +60,6 @@ namespace AlarmClock.Models
                 _hour = int.Parse(value);
 
                 OnPropertyChanged(nameof(Hour));
-                OnPropertyChanged(nameof(IsAllowedTime));
             }
         }
 
@@ -70,22 +74,21 @@ namespace AlarmClock.Models
                 _minute = int.Parse(value);
 
                 OnPropertyChanged(nameof(Minute));
-                OnPropertyChanged(nameof(IsAllowedTime));
             }
         }
 
         public bool IsBaseAlarm => Clock == null;
         public bool IsAddEnabled => IsBaseAlarm;
-        public bool IsSaveEnabled => !IsBaseAlarm; // ???
-        public bool IsCancelEnabled => !IsBaseAlarm; // ???
-        public bool IsBellEnabled => !IsBaseAlarm;
+        public bool IsSaveEnabled => !IsBaseAlarm;
+        public bool IsCancelEnabled => !IsBaseAlarm;
+        public bool IsRingEnabled => !IsBaseAlarm;
         public bool IsDeleteEnabled => !IsBaseAlarm;
 
-        public bool IsAllowedTime =>
+        private bool CanAddAlarmExecute(object obj) =>
             !UserAlarms
-                   .Where(item => item != this)
-                   .Select(GetTimeValue)
-                   .Contains(GetTimeValue(this));
+                .Where(item => item != this)
+                .Select(GetTimeValue)
+                .Contains(GetTimeValue(this));
 
         public bool IsActive
         {
@@ -104,18 +107,17 @@ namespace AlarmClock.Models
             }
         }
 
-        public bool IsVisible
+        public bool IsStopped
         {
-            get => _isVisible;
+            get => _isStopped;
             set
             {
-                _isVisible = value;
+                _isStopped = value;
 
-                OnPropertyChanged(nameof(IsVisible));
+                IsActive = !IsActive;
             }
         }
 
-        public bool IsStopped { get; private set; }
         public bool IsEnabled => IsBaseAlarm || !IsActive;
         #endregion
 
@@ -144,15 +146,15 @@ namespace AlarmClock.Models
                 delegate { ChangeAlarm(ref _minute, TimeProp.Minute, -1, MaxMinutes); }
            ));
 
-        public ICommand AddAlarm => _addAlarm ?? (_addAlarm = new RelayCommand(AddAlarmExecute));
+        public ICommand AddAlarm => _addAlarm ?? (_addAlarm = new RelayCommand(AddAlarmExecute, CanAddAlarmExecute));
 
         public ICommand DeleteAlarm => _deleteAlarm ?? (_deleteAlarm = new RelayCommand(DeleteAlarmExecute));
 
-        public ICommand BellAlarm => _bellAlarm ?? (_bellAlarm = new RelayCommand(
+        public ICommand RingAlarm => _ringAlarm ?? (_ringAlarm = new RelayCommand(
             delegate
             {
                 if (IsActive)
-                    IsStopped = true;
+                    _isStopped = true;
                 IsActive = !IsActive;
             }));
         #endregion
@@ -165,34 +167,17 @@ namespace AlarmClock.Models
             _minute = minute;
         }
 
-        private static int GetTimeValue(AlarmItem ai) => ai._hour * MaxMinutes + ai._minute;
-        private static int GetTimeValue(DateTime dt) => dt.Hour * MaxMinutes + dt.Minute;
+        private static int GetTimeValue(AlarmItem ai) => ai._hour * (MaxMinutes + 1) + ai._minute;
+        private static int GetTimeValue(DateTime dt) => dt.Hour * (MaxMinutes +1 ) + dt.Minute;
 
         public bool Equals(DateTime dt) => GetTimeValue(dt) == GetTimeValue(this);
 
         private void DeleteAlarmExecute(object obj)
         {
-            var userClocks = _clocks.ForUser(StationManager.CurrentUser.Id);
-
-            for (int i = 1, j = 0; i < _owner.Count; i++)
-            {
-                if (!_owner[i].IsVisible || _owner[i] == this)
-                    continue;
-
-                _owner[i].Clock.LastTriggered = j == 0 ? new DateTime() : userClocks[j - 1].NextTrigger;
-
-                _owner[i].Clock.NextTrigger = j + 1 == userClocks.Count ? new DateTime() : userClocks[j + 1].LastTriggered;
-
-                // (in process for filter clocks in the same order as alarms)_clocks[i - 1] = _owner[i].Clock;
-                j++;
-            }
-
             _clocks.Delete(Clock.Id);
-            Logger.Log($"Alarm clock {Clock.Id} was deleted.");
-
             _owner.Remove(this);
 
-            Update();
+            Logger.Log($"Alarm clock {Clock.Id} was deleted.");
         }
 
         private void ChangeAlarm(ref int propValue, TimeProp property, int offset, byte highBound)
@@ -201,12 +186,9 @@ namespace AlarmClock.Models
 
             propValue = newValue == -1 ? highBound : (newValue == highBound + 1 ? 0 : newValue);
 
-            IsStopped = false;
+            _isStopped = false;
 
             OnPropertyChanged(property.ToString());
-            OnPropertyChanged(nameof(IsAllowedTime));
-
-            Update();
 
             if (IsBaseAlarm)
                 return;
@@ -214,29 +196,17 @@ namespace AlarmClock.Models
             switch (property)
             {
                 case TimeProp.Hour:
-                    Clock.NextTrigger = GetNewClockTime(newValue, _minute); // maybe should be replaced by Update() call
+                    Clock.NextTrigger = GetNewClockTime(newValue, _minute);
                     break;
                 case TimeProp.Minute:
-                    Clock.NextTrigger = GetNewClockTime(_hour, newValue); // maybe should be replaced by Update() call
+                    Clock.NextTrigger = GetNewClockTime(_hour, newValue);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(property), property, "Unknown TimeProp.");
+                    throw new ArgumentOutOfRangeException(nameof(property), property, @"Unknown TimeProp.");
             }
 
             Logger.Log($"Property {property.ToString()} of Alarm clock {Clock.Id} was updated to have value {propValue}.");
         }
-
-        public void Update()
-        {
-            var now = DateTime.Now;
-
-            //TODO change time in first alarm 
-            //_hour = now.Hour;
-            //_minute = now.Minute;
-            _owner[0].OnPropertyChanged(nameof(IsAllowedTime));
-            //OnPropertyChanged(nameof(Hour));
-            //OnPropertyChanged(nameof(Minute));
-        } 
 
         private void AddAlarmExecute(object obj)
         {
@@ -244,70 +214,40 @@ namespace AlarmClock.Models
 
             try
             {
-                var clock = new Clock(
-                    GetNewClockTime(_hour, _minute), DateTime.Now, StationManager.CurrentUser
-                );
-
-                _owner.Add(new AlarmItem(_owner, _clocks, _hour, _minute)
+                var newTime = GetNewClockTime(_hour, _minute);
+                var clock = obj as Clock ?? _clocks.Add(new Clock(
+                    newTime, newTime.AddDays(1), StationManager.CurrentUser
+                ));
+                var alarm = new AlarmItem(
+                    _owner,
+                    _clocks,
+                    clock.NextTrigger.Hour,
+                    clock.NextTrigger.Minute)
                 {
-                    Clock = _clocks.Add(clock)
-                });
+                    Clock = clock
+                };
+                var index = UserAlarms.FindIndex(item => GetTimeValue(item) > GetTimeValue(alarm));
+
+                _owner.Insert(index == -1 ? _owner.Count : index + 1, alarm);
 
                 Logger.Log($"Alarm clock {clock.Id} with time {clock.NextTrigger} was successfully added" +
                            $" by the User {StationManager.CurrentUser.Id}.");
-
-                Rearrange();
-
-                OnPropertyChanged(nameof(IsAllowedTime));
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 MessageBox.Show(Resources.CantParseTimeError);
-                Logger.Log(ex, Resources.CantParseTimeError);
-            }
-        }
-
-        public void Rearrange()
-        {
-            var sortedList = UserAlarms.OrderBy(GetTimeValue).ToList();
-
-            for (int i = 1, j = 0; i < _owner.Count; i++)
-            {
-                if (!_owner[i].IsVisible)
-                    continue;
-
-                _owner[i] = sortedList[j];
-
-                if (j > 0)
-                    _owner[i].Clock.LastTriggered = GetNewClockTime(sortedList[j - 1]._hour, sortedList[j - 1]._minute);
-
-                if (j < sortedList.Count - 1)
-                    _owner[i].Clock.NextTrigger = GetNewClockTime(sortedList[j + 1]._hour, sortedList[j + 1]._minute);
-
-                //(the same as above)_clocks[i - 1] = _owner[i].Clock;
-                j++;
+                Logger.Log(e, Resources.CantParseTimeError);
             }
         }
 
         private static DateTime GetNewClockTime(int hour, int minute)
         {
             var tmpDate = DateTime.Now;
-
-            // check if clock will NOT ring today
-            if (TimeSpan.Compare(tmpDate.TimeOfDay, new TimeSpan(hour, minute, tmpDate.Second)) >= 0)
-                tmpDate = tmpDate.AddDays(1);
-
             return new DateTime(tmpDate.Year, tmpDate.Month, tmpDate.Day, hour, minute, tmpDate.Second);
         }
 
         private static bool IsValidTime(string time, int max) =>
             !Regex.IsMatch(time) && time.Length == 2 &&
                 int.Parse(time) >= 0 && int.Parse(time) <= max;
-    }
-
-    enum TimeProp
-    {
-        Hour,
-        Minute
     }
 }

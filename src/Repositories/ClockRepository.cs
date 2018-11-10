@@ -35,19 +35,11 @@ namespace AlarmClock.Repositories
 
         public Guid Delete(Guid id)
         {
-            var curr = Clocks.Single(c => c.Id == id);
-
-            Clocks.Remove(curr);
+            Clocks.Remove(
+                Clocks.Single(c => c.Id == id)
+            );
 
             return id;
         }
-
-        /* idea for rewriting access by index
-         public Clock this[int key]
-                {
-                    get => Clocks[key];
-                    set => Clocks[key] = value;
-                }
-        */ 
     }
 }
