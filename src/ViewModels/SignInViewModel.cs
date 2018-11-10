@@ -10,7 +10,7 @@ using AlarmClock.Repositories;
 
 namespace AlarmClock.ViewModels
 {
-    class SignInViewModel : NotifyPropertyChanged
+    internal class SignInViewModel : NotifyPropertyChanged
     {
         private string _emailOrLogin;
         private string _password;

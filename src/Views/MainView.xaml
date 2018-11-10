@@ -8,6 +8,12 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <SolidColorBrush x:Key="BackgroundBrush" Color="White"/>
+        <Storyboard x:Key="Blinking" RepeatBehavior="0:0:10">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" AutoReverse="True"
+                To="0.1"
+                Duration="0:0:2.0"
+                Completed="StoryboardCompleted"/>
+        </Storyboard>
         <Style x:Key="ImageEnabled" TargetType="Image">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="False">
@@ -15,12 +21,7 @@
                 </Trigger>
                 <DataTrigger Binding="{Binding IsActive}" Value="True">
                     <DataTrigger.EnterActions>
-                        <BeginStoryboard x:Name="blinking">
-                            <Storyboard RepeatBehavior="0:2:00">
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity" AutoReverse="True"
-                                         To="0.1" Duration="0:0:0.5">
-                                </DoubleAnimation>
-                            </Storyboard>
+                        <BeginStoryboard x:Name="blinking" Storyboard="{StaticResource Blinking}">
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
@@ -45,10 +46,11 @@
         </Style>
 
         <ControlTemplate x:Key="AlarmClockTemplate" TargetType="ContentControl">
-            <StackPanel Orientation="Vertical" Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2">
                     <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsEnabled}">
-                        <TextBox Text="{Binding Hour, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler" />
+                        <TextBox Text="{Binding Hour, UpdateSourceTrigger=PropertyChanged}" KeyDown="KeyDownHandler">
+                        </TextBox>
                         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
                             <Button Command="{Binding ClickUpHour}" Content="˄" Height="32" Width="20" />
                             <Button Command="{Binding ClickDownHour}" Content="˅" Height="32" Width="20" />
@@ -65,16 +67,14 @@
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center" Width="80">
                         <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
                             ToolTip="Add alarm clock" Command="{Binding AddAlarm}"
-                            Visibility="{Binding IsAddEnabled, Converter={StaticResource BoolToVisibility}}"
-                            IsEnabled="{Binding IsAllowedTime}">
+                            Visibility="{Binding IsAddEnabled, Converter={StaticResource BoolToVisibility}}">
                             <Image Source="/AlarmClock;component/resources/btns/add.png" Height="24" Style="{StaticResource ImageEnabled}"/>
                         </Button>
                         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
                             Visibility="{Binding IsSaveEnabled, Converter={StaticResource BoolToVisibility}}"/>
                         <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
-                            ToolTip="Bell alarm clock" Command="{Binding BellAlarm}"
-                            Visibility="{Binding IsBellEnabled, Converter={StaticResource BoolToVisibility}}"
-                            IsEnabled="{Binding IsAllowedTime}">
+                            ToolTip="Ring alarm clock" Command="{Binding RingAlarm}"
+                            Visibility="{Binding IsRingEnabled, Converter={StaticResource BoolToVisibility}}">
                             <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24" Style="{StaticResource ImageEnabled}"/>
                         </Button>
                     </StackPanel>

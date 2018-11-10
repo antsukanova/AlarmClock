@@ -1,7 +1,6 @@
 ﻿using System;
 
 using AlarmClock.Properties;
-using AlarmClock.ViewModels;
 using AlarmClock.Views;
 
 namespace AlarmClock.Misc
@@ -16,7 +15,6 @@ namespace AlarmClock.Misc
     public class NavigationModel
     {
         private readonly MainWindow _contentWindow;
-        private MainView   _mainView;
 
         public NavigationModel(MainWindow contentWindow) => _contentWindow = contentWindow;
 
@@ -31,8 +29,7 @@ namespace AlarmClock.Misc
                     _contentWindow.Content = new SignUpView();
                     break;
                 case Page.Main:
-                    ((MainViewModel)(_mainView = _mainView ?? new MainView()).DataContext).Changed();
-                    _contentWindow.Content = _mainView;
+                    _contentWindow.Content = new MainView();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(page), page, Resources.UnknownPageError);
