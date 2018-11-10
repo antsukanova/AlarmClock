@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -46,46 +47,54 @@ namespace AlarmClock.ViewModels
 
         private static void ToSignUpExecute(object obj) => NavigationManager.Navigate(Page.SignUp);
 
-        private void SignInExecute(object obj)
+        private async void SignInExecute(object obj)
         {
-            User user;
-            var userRepo = new UserRepository();
-
-            Logger.Log($"User tried to sign in with email or login - {EmailOrLogin}.");
-
-            try
+            LoaderManager.Instance.ShowLoader();
+            var result = await Task.Run(() =>
             {
-                user = userRepo.Find(EmailOrLogin);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(Resources.CantGetUserError);
-                Logger.Log(ex, Resources.CantGetUserError);
-                return;
-            }
+                User user;
+                var userRepo = new UserRepository();
 
-            if (user == null)
-            {
-                var msg = string.Format(Resources.UserDoesntExistError, EmailOrLogin);
+                Logger.Log($"User tried to sign in with email or login - {EmailOrLogin}.");
 
-                MessageBox.Show(msg);
-                Logger.Log(msg);
-                return;
-            }
+                try
+                {
+                    user = userRepo.Find(EmailOrLogin);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(Resources.CantGetUserError);
+                    Logger.Log(ex, Resources.CantGetUserError);
+                    return false;
+                }
 
-            if (!user.IsPasswordCorrect(Password))
-            {
-                MessageBox.Show(Resources.WrongPasswordError);
-                Logger.Log(Resources.WrongPasswordError);
-                return;
-            }
+                if (user == null)
+                {
+                    var msg = string.Format(Resources.UserDoesntExistError, EmailOrLogin);
 
-            userRepo.Update(user.UpdateLastVisit());
-            Logger.Log($"User {user.Login} last visit time was successfully updated.");
+                    MessageBox.Show(msg);
+                    Logger.Log(msg);
+                    return false;
+                }
 
-            StationManager.Authorize(user);
+                if (!user.IsPasswordCorrect(Password))
+                {
+                    MessageBox.Show(Resources.WrongPasswordError);
+                    Logger.Log(Resources.WrongPasswordError);
+                    return false;
+                }
 
-            NavigationManager.Navigate(Page.Main);
+                userRepo.Update(user.UpdateLastVisit());
+                Logger.Log($"User {user.Login} last visit time was successfully updated.");
+
+                StationManager.Authorize(user);
+
+                return true;
+            });
+
+            LoaderManager.Instance.HideLoader();
+            if (result)
+                NavigationManager.Navigate(Page.Main);
         }
 
         private bool SignInCanExecute(object obj) =>

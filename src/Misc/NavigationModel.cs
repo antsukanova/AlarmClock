@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Windows;
 using AlarmClock.Properties;
 using AlarmClock.Views;
 
@@ -23,13 +23,13 @@ namespace AlarmClock.Misc
             switch (page)
             {
                 case Page.SignIn:
-                    _contentWindow.Content = new SignInView();
+                    _contentWindow.ContentControl.Content = new SignInView();
                     break;
                 case Page.SignUp:
-                    _contentWindow.Content = new SignUpView();
+                    _contentWindow.ContentControl.Content = new SignUpView();
                     break;
                 case Page.Main:
-                    _contentWindow.Content = new MainView();
+                    _contentWindow.ContentControl.Content = new MainView();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(page), page, Resources.UnknownPageError);
