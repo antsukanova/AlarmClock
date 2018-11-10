@@ -68,11 +68,10 @@ namespace AlarmClock.ViewModels
         private async void StartUp()
         {
             LoaderManager.Instance.ShowLoader();
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 var now = DateTime.Now;
-                await Task.Delay(2000);
-
+                
                 AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));
 
                 Clocks
