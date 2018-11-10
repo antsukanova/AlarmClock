@@ -85,15 +85,7 @@ namespace AlarmClock.ViewModels
 
             StationManager.Authorize(user);
 
-            AfterSignIn();
-        }
-
-        private void AfterSignIn() => NavigationManager.Navigate(Page.Main);
-
-        internal void CheckCurrentUser()
-        {
-            if (StationManager.CurrentUser != null)
-                AfterSignIn();
+            NavigationManager.Navigate(Page.Main);
         }
 
         private bool SignInCanExecute(object obj) =>
