@@ -41,7 +41,7 @@ namespace AlarmClock.Managers
             return user;
         }
 
-        public static void ClearSerializedLastUser()
+        internal static void ClearSerializedLastUser()
         {
             try
             {
@@ -86,6 +86,21 @@ namespace AlarmClock.Managers
                 return null;
             }
         }
+
+        internal static void ClearSerializedAlarms()
+        {
+            try
+            {
+                using (var stream = new FileStream(FileFolderHelper.AlarmsFilePath, FileMode.Open))
+                    stream.SetLength(0);
+
+                Logger.Log("Serialized alarms were successfully cleared.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, "Failed to clear serialized alarms.");
+            }
+        }
         #endregion
 
         #region Users
@@ -115,6 +130,21 @@ namespace AlarmClock.Managers
             {
                 Logger.Log(ex, "Failed to deserialize users.");
                 return null;
+            }
+        }
+
+        internal static void ClearSerializedUsers()
+        {
+            try
+            {
+                using (var stream = new FileStream(FileFolderHelper.UsersFilePath, FileMode.Open))
+                    stream.SetLength(0);
+
+                Logger.Log("Serialized users were successfully cleared.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex, "Failed to clear serialized users.");
             }
         }
         #endregion

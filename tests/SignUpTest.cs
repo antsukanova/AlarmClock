@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
+using AlarmClock.Managers;
 using AlarmClock.Properties;
 
 using FluentAssertions;
@@ -26,6 +27,9 @@ namespace AlarmClock.tests
 
             Window = Application.Launch(new Uri(path).LocalPath).GetWindow("Alarm clock");
             ToSignUp();
+
+            SerializationManager.ClearSerializedUsers();
+            SerializationManager.ClearSerializedLastUser();
         }
 
         public void Dispose() => Window.Close();
@@ -104,6 +108,10 @@ namespace AlarmClock.tests
 
             // At the Main window
             SignOutBtn.Should().NotBe(null);
+            SignOutBtn.Click();
+
+            // Cleanup
+            SerializationManager.ClearSerializedUsers();
         }
         #endregion
 

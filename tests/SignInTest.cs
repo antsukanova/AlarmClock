@@ -3,6 +3,8 @@
 using System;
 using System.Reflection;
 
+using AlarmClock.Managers;
+
 using FluentAssertions;
 
 using TestStack.White;
@@ -25,6 +27,9 @@ namespace AlarmClock.tests
             var path = Assembly.GetExecutingAssembly().CodeBase.Replace("#", "%23");
 
             Window = Application.Launch(new Uri(path).LocalPath).GetWindow("Alarm clock");
+
+            SerializationManager.ClearSerializedUsers();
+            SerializationManager.ClearSerializedLastUser();
         }
 
         public void Dispose() => Window.Close();
@@ -74,6 +79,7 @@ namespace AlarmClock.tests
         [Fact]
         public void SuccessSignIn()
         {
+            // Preparation
             ToSignUpBtn.Click();
 
             Window.Get<TextBox>("Name").Enter("Name");
@@ -83,14 +89,21 @@ namespace AlarmClock.tests
             Window.Get<TextBox>("Password").Enter("Password");
 
             Window.Get<Button>("SignUp").Click();
-            Window.Get<Button>("SignOut").Click();
 
+            SignOutBtn.Should().NotBe(null);
+            SignOutBtn.Click();
+
+            // Action
             EnterCredentials();
 
             SignInBtn.Click();
 
             // At the Main window
-            Window.Get<Button>("SignOut").Should().NotBe(null);
+            SignOutBtn.Should().NotBe(null);
+            SignOutBtn.Click();
+
+            // Cleanup
+            SerializationManager.ClearSerializedUsers();
         }
         #endregion
 
@@ -107,6 +120,7 @@ namespace AlarmClock.tests
 
         private static Button SignInBtn => Window.Get<Button>("SignIn");
         private static Button ToSignUpBtn => Window.Get<Button>("ToSignUp");
+        private static Button SignOutBtn => Window.Get<Button>("SignOut");
         #endregion
     }
 }
