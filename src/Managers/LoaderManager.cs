@@ -31,7 +31,6 @@ namespace AlarmClock.Managers
         {
             _loaderOwner.LoaderVisibility = Visibility.Visible;
             _loaderOwner.IsEnabled = false;
-
         }
 
         internal void HideLoader()
