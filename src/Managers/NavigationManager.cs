@@ -27,8 +27,8 @@ namespace AlarmClock.Managers
             }
         }
 
-        public static NavigationModel Initialize(NavigationModel navigationModel) 
-            => Instance.Model = navigationModel;
+        public static NavigationModel Initialize(NavigationModel navigationModel) => 
+            Instance.Model = navigationModel;
 
         public static void Navigate(Page page) => Instance.Model?.Navigate(page);
     }

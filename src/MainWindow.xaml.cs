@@ -1,22 +1,20 @@
 ﻿using AlarmClock.Managers;
 using AlarmClock.Misc;
+using AlarmClock.ViewModels;
 
 namespace AlarmClock
 {
     public partial class MainWindow
     {
-        public new object Content
-        {
-            get => PageContent.Content;
-            set => PageContent.Content = value;
-        }
-
         public MainWindow()
         {
             InitializeComponent();
 
+            var viewModel = new MainWindowViewModel();
+            DataContext = viewModel;
+
             NavigationManager.Initialize(new NavigationModel(this))
-                             .Navigate(Page.SignIn);
+                             .Navigate(StationManager.CurrentUser != null ? Page.Main : Page.SignIn);
         }
     }
 }

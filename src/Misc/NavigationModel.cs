@@ -25,9 +25,7 @@ namespace AlarmClock.Misc
             switch (page)
             {
                 case Page.SignIn:
-                    var siView = new SignInView();
-                    _contentWindow.Content = siView;
-                    siView.CheckCurrentUser();
+                    _contentWindow.Content = new SignInView();
                     break;
                 case Page.SignUp:
                     _contentWindow.Content = new SignUpView();
