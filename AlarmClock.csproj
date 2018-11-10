@@ -100,6 +100,7 @@
     <Compile Include="src\Managers\LoaderManager.cs" />
     <Compile Include="src\Managers\SerializationManager.cs" />
     <Compile Include="src\Misc\FileFolderHelper.cs" />
+    <Compile Include="src\Misc\IContentWindow.cs" />
     <Compile Include="src\Misc\ILoaderOwner.cs" />
     <Compile Include="src\Misc\Logger.cs" />
     <Compile Include="src\Misc\SerializationHelper.cs" />

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -79,42 +80,50 @@ namespace AlarmClock.ViewModels
 
         private static void ToSignInExecute(object obj) => NavigationManager.Navigate(Page.SignIn);
 
-        private void SignUpExecute(object obj)
+        private async void SignUpExecute(object obj)
         {
-            var userRepo = new UserRepository();
-            var user = new User(Name, Surname, Login, Email, Password);
-
-            Logger.Log("User tried to sign up with credentials:" +
-                       $" Name - {Name}, Surname - {Surname}, Login - {Login}, Email - {Email}");
-
-            if (!new EmailAddressAttribute().IsValid(Email))
+            LoaderManager.Instance.ShowLoader();
+            var result = await Task.Run(() =>
             {
-                var msg = string.Format(Resources.InvalidEmailError, Email);
+                var userRepo = new UserRepository();
+                var user = new User(Name, Surname, Login, Email, Password);
 
-                MessageBox.Show(msg);
-                Logger.Log(msg);
+                Logger.Log("User tried to sign up with credentials:" +
+                           $" Name - {Name}, Surname - {Surname}, Login - {Login}, Email - {Email}");
 
-                return;
-            }
+                if (!new EmailAddressAttribute().IsValid(Email))
+                {
+                    var msg = string.Format(Resources.InvalidEmailError, Email);
 
-            if (userRepo.Exists(user))
-            {
-                var msg = string.Format(Resources.UserAlreadyExistsError, Email, Login);
+                    MessageBox.Show(msg);
+                    Logger.Log(msg);
 
-                MessageBox.Show(msg);
-                Logger.Log(msg);
+                    return false;
+                }
 
-                return;
-            }
+                if (userRepo.Exists(user))
+                {
+                    var msg = string.Format(Resources.UserAlreadyExistsError, Email, Login);
 
-            userRepo.Add(user);
-            Logger.Log($"User {user.Login} was successfully added to the db.");
+                    MessageBox.Show(msg);
+                    Logger.Log(msg);
 
-            SerializationManager.SerializeUsers(userRepo);
+                    return false;
+                }
 
-            StationManager.Authorize(user);
+                userRepo.Add(user);
+                Logger.Log($"User {user.Login} was successfully added to the db.");
 
-            NavigationManager.Navigate(Page.Main);
+                SerializationManager.SerializeUsers(userRepo);
+
+                StationManager.Authorize(user);
+
+                return true;
+            });
+
+            LoaderManager.Instance.HideLoader();
+            if (result)
+                NavigationManager.Navigate(Page.Main);
         }
 
         private bool SignUpCanExecute(object obj) => 

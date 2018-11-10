@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -15,8 +16,8 @@ namespace AlarmClock.ViewModels
     {
         #region attributes
         private string _currentTime;
-        private readonly DispatcherTimer _setTimer;
-        private readonly DispatcherTimer _checkAlarm;
+        private DispatcherTimer _setTimer;
+        private DispatcherTimer _checkAlarm;
 
         private ICommand _signOut;
         #endregion
@@ -42,8 +43,6 @@ namespace AlarmClock.ViewModels
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
 
-        private AlarmItem BaseAlarm => AlarmClocks.Single(item => item.IsBaseAlarm);
-
         #endregion
 
         #region command functions
@@ -58,21 +57,29 @@ namespace AlarmClock.ViewModels
         }
         #endregion
 
-        public MainViewModel()
+        public MainViewModel() => StartUp();
+
+        private async void StartUp()
         {
-            var now = DateTime.Now;
+            LoaderManager.Instance.ShowLoader();
+            await Task.Run(() =>
+            {
+                var now = DateTime.Now;
 
-            AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));
+                AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));
 
-            Clocks
-                .ForUser(CurrentUser.Id)
-                .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
+                Clocks
+                    .ForUser(CurrentUser.Id)
+                    .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
 
-            (_setTimer = SetTimer()).Start();
-            (_checkAlarm = CheckAlarm()).Start();
+                (_setTimer = SetTimer()).Start();
+                (_checkAlarm = CheckAlarm()).Start();
 
-            // TODO: Actually load clocks for the User
-            Logger.Log($"Loaded Alarm clocks for User {CurrentUser.Login}.");
+                Logger.Log($"Loaded Alarm clocks for User {CurrentUser.Login}.");
+
+                return true;
+            });
+            LoaderManager.Instance.HideLoader();
         }
 
         private DispatcherTimer SetTimer()
