@@ -80,7 +80,6 @@ namespace AlarmClock.Models
         public bool IsBaseAlarm => Clock == null;
         public bool IsAddEnabled => IsBaseAlarm;
         public bool IsSaveEnabled => !IsBaseAlarm;
-        public bool IsCancelEnabled => !IsBaseAlarm;
         public bool IsRingEnabled => !IsBaseAlarm;
         public bool IsDeleteEnabled => !IsBaseAlarm;
 
