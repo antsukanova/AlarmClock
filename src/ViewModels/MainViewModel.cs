@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -18,6 +19,7 @@ namespace AlarmClock.ViewModels
         private string _currentTime;
         private DispatcherTimer _setTimer;
         private DispatcherTimer _checkAlarm;
+        private static readonly object Lock = new object();
 
         private ICommand _signOut;
         #endregion
@@ -57,14 +59,19 @@ namespace AlarmClock.ViewModels
         }
         #endregion
 
-        public MainViewModel() => StartUp();
+        public MainViewModel()
+        {
+            BindingOperations.EnableCollectionSynchronization(AlarmClocks, Lock);
+            StartUp();
+        }
 
         private async void StartUp()
         {
             LoaderManager.Instance.ShowLoader();
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 var now = DateTime.Now;
+                await Task.Delay(2000);
 
                 AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));
 
