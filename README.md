@@ -31,8 +31,7 @@ To run tests via Visual Studio you can open a test file, click on the icon next 
 Other IDEs should have simillar ways to do that.
 
 ## Known bugs
-Tests fail when there is a validation error and a message box appears. \
-The screen is still blocked so White can't find the message box.
+All known bugs can be found at the [issues](https://github.com/AnnabellFlem/AlarmClock/issues) page.
 
 ## Authors
 Tsukanova Anna and Morenets Igor.
