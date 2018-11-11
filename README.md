@@ -30,5 +30,9 @@ Your keyboard layout should be set to English, because White uses it to enter te
 To run tests via Visual Studio you can open a test file, click on the icon next to the class name and choose "Run all".
 Other IDEs should have simillar ways to do that.
 
+## Known bugs
+Tests fail when there is a validation error and a message box appears. \
+The screen is still blocked so White can't find the message box.
+
 ## Authors
 Tsukanova Anna and Morenets Igor.
