@@ -30,5 +30,8 @@ Your keyboard layout should be set to English, because White uses it to enter te
 To run tests via Visual Studio you can open a test file, click on the icon next to the class name and choose "Run all".
 Other IDEs should have simillar ways to do that.
 
+## Known bugs
+All known bugs can be found at the [issues](https://github.com/AnnabellFlem/AlarmClock/issues) page.
+
 ## Authors
 Tsukanova Anna and Morenets Igor.
