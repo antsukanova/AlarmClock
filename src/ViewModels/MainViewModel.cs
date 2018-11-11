@@ -80,9 +80,6 @@ namespace AlarmClock.ViewModels
                     .ForUser(CurrentUser.Id)
                     .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
 
-//                (_setTimer = SetTimer()).Start();
-//                (_checkAlarm = CheckAlarm()).Start();
-
                 Logger.Log($"Loaded Alarm clocks for User {CurrentUser.Login}.");
 
                 return true;
