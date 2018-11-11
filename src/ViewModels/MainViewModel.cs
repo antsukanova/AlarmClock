@@ -68,6 +68,8 @@ namespace AlarmClock.ViewModels
         private async void StartUp()
         {
             LoaderManager.Instance.ShowLoader();
+            (_setTimer = SetTimer()).Start();
+            (_checkAlarm = CheckAlarm()).Start();
             await Task.Run(() =>
             {
                 var now = DateTime.Now;
@@ -78,8 +80,8 @@ namespace AlarmClock.ViewModels
                     .ForUser(CurrentUser.Id)
                     .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
 
-                (_setTimer = SetTimer()).Start();
-                (_checkAlarm = CheckAlarm()).Start();
+//                (_setTimer = SetTimer()).Start();
+//                (_checkAlarm = CheckAlarm()).Start();
 
                 Logger.Log($"Loaded Alarm clocks for User {CurrentUser.Login}.");
 
