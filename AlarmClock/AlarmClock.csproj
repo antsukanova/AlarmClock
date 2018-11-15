@@ -42,7 +42,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>resources\alarmclock.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\alarmclock.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -99,68 +99,68 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="src\App.xaml">
+    <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="src\Managers\LoaderManager.cs" />
-    <Compile Include="src\Managers\SerializationManager.cs" />
-    <Compile Include="src\Misc\CountConverter.cs" />
-    <Compile Include="src\Misc\FileFolderHelper.cs" />
-    <Compile Include="src\Misc\IContentWindow.cs" />
-    <Compile Include="src\Misc\ILoaderOwner.cs" />
-    <Compile Include="src\Misc\Logger.cs" />
-    <Compile Include="src\Misc\SerializationHelper.cs" />
-    <Compile Include="src\ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="tests\SignUpTest.cs" />
-    <Compile Include="tests\SignInTest.cs" />
-    <Page Include="src\Views\MainView.xaml">
+    <Compile Include="Managers\LoaderManager.cs" />
+    <Compile Include="Managers\SerializationManager.cs" />
+    <Compile Include="Misc\CountConverter.cs" />
+    <Compile Include="Misc\FileFolderHelper.cs" />
+    <Compile Include="Misc\IContentWindow.cs" />
+    <Compile Include="Misc\ILoaderOwner.cs" />
+    <Compile Include="Misc\Logger.cs" />
+    <Compile Include="Misc\SerializationHelper.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="..\Tests\SignUpTest.cs" />
+    <Compile Include="..\Tests\SignInTest.cs" />
+    <Page Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="src\Views\SignUpView.xaml">
+    <Page Include="Views\SignUpView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="src\Views\SignInView.xaml">
+    <Page Include="Views\SignInView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="src\MainWindow.xaml">
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="src\Managers\StationManager.cs" />
-    <Compile Include="src\Misc\Encrypter.cs" />
-    <Compile Include="src\Misc\NotifyPropertyChanged.cs" />
-    <Compile Include="src\Models\AlarmItem.cs" />
-    <Compile Include="src\Models\Clock.cs" />
-    <Compile Include="src\Repositories\IClockRepository.cs" />
-    <Compile Include="src\Repositories\IUserRepository.cs" />
-    <Compile Include="src\Repositories\ClockRepository.cs" />
-    <Compile Include="src\Repositories\UserRepository.cs" />
-    <Compile Include="src\Managers\NavigationManager.cs" />
-    <Compile Include="src\Misc\NavigationModel.cs" />
-    <Compile Include="src\Models\User.cs" />
-    <Compile Include="src\Misc\RelayCommand.cs" />
-    <Compile Include="src\ViewModels\SignUpViewModel.cs" />
-    <Compile Include="src\ViewModels\MainViewModel.cs" />
-    <Compile Include="src\ViewModels\SignInViewModel.cs" />
-    <Compile Include="src\App.xaml.cs">
+    <Compile Include="Managers\StationManager.cs" />
+    <Compile Include="Misc\Encrypter.cs" />
+    <Compile Include="Misc\NotifyPropertyChanged.cs" />
+    <Compile Include="Models\AlarmItem.cs" />
+    <Compile Include="Models\Clock.cs" />
+    <Compile Include="Repositories\IClockRepository.cs" />
+    <Compile Include="Repositories\IUserRepository.cs" />
+    <Compile Include="Repositories\ClockRepository.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
+    <Compile Include="Managers\NavigationManager.cs" />
+    <Compile Include="Misc\NavigationModel.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Misc\RelayCommand.cs" />
+    <Compile Include="ViewModels\SignUpViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\SignInViewModel.cs" />
+    <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\Views\MainView.xaml.cs">
+    <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="src\Views\SignUpView.xaml.cs">
+    <Compile Include="Views\SignUpView.xaml.cs">
       <DependentUpon>SignUpView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="src\Views\SignInView.xaml.cs">
+    <Compile Include="Views\SignInView.xaml.cs">
       <DependentUpon>SignInView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="src\MainWindow.xaml.cs">
+    <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -193,28 +193,28 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\alarmclock.ico" />
+    <Resource Include="Resources\alarmclock.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\man-user.png" />
+    <Resource Include="Resources\Btns\man-user.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\signout.png" />
+    <Resource Include="Resources\Btns\signout.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\delete.png" />
+    <Resource Include="Resources\Btns\delete.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\add.png" />
+    <Resource Include="Resources\Btns\add.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\bell.png" />
+    <Resource Include="Resources\Btns\bell.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\save.png" />
+    <Resource Include="Resources\Btns\save.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\btns\undo.png" />
+    <Resource Include="Resources\Btns\undo.png" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />

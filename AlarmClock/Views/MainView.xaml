@@ -150,6 +150,3 @@
         </StatusBar>
     </Grid>
 </UserControl>
-<!--add class CountConverter for count existing user's clocks
-fixed problem with displaying user name
-add basic scroll-->
