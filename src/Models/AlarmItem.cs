@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace AlarmClock.Models
@@ -247,5 +248,21 @@ namespace AlarmClock.Models
         private static bool IsValidTime(string time, int max) =>
             !Regex.IsMatch(time) && time.Length == 2 &&
                 int.Parse(time) >= 0 && int.Parse(time) <= max;
+
+        public void KeyDownHandler(object sender, KeyEventArgs e)
+        {
+            var myCaretIndex = ((TextBox)sender).CaretIndex;
+            var characters = ((TextBox)sender).Text.ToCharArray();
+
+            if (myCaretIndex >= characters.Length)
+                return;
+
+            characters[myCaretIndex] = (char)KeyInterop.VirtualKeyFromKey(e.Key);
+
+            ((TextBox)sender).Text = string.Join("", characters);
+            ((TextBox)sender).CaretIndex = myCaretIndex + 1;
+
+            e.Handled = true;
+        }
     }
 }
