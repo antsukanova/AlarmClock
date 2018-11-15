@@ -22,6 +22,7 @@ namespace AlarmClock.ViewModels
         private static readonly object Lock = new object();
 
         private ICommand _signOut;
+        private ICommand _alarmCompleted;
         #endregion
 
         #region properties
@@ -45,6 +46,13 @@ namespace AlarmClock.ViewModels
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
 
+        public ICommand AlarmCompleted => _alarmCompleted ?? (_alarmCompleted = new RelayCommand(
+            delegate
+            {
+                var alarm = AlarmClocks.SingleOrDefault(item => item.IsActive);
+                if (alarm != null)
+                    alarm.IsStopped = true;
+            }));
         #endregion
 
         #region command functions
