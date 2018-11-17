@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Alarm clock" Height="600" Width="800">
     <Grid>
-        <ContentControl Name="_contentControl" IsEnabled="{Binding Path=IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ContentControl Name="PageContent" IsEnabled="{Binding Path=IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         <fa:ImageAwesome Icon="Spinner" Width="50" Height="50" Spin="True"
                          HorizontalAlignment="Center" VerticalAlignment="Center"
                          Visibility="{Binding Path=LoaderVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />

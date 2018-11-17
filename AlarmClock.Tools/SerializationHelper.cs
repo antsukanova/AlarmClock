@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace AlarmClock.Misc
+namespace AlarmClock.Tools
 {
     public static class SerializationHelper
     {

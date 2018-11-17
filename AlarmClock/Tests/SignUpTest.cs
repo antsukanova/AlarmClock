@@ -15,7 +15,7 @@ using Button = TestStack.White.UIItems.Button;
 using Label = TestStack.White.UIItems.Label;
 using TextBox = TestStack.White.UIItems.TextBox;
 
-namespace AlarmClock.tests
+namespace AlarmClock.Tests
 {
     public class SignUpTest : IDisposable
     {

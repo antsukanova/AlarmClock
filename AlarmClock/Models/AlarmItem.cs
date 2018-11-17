@@ -1,7 +1,9 @@
-﻿using AlarmClock.Managers;
+﻿using AlarmClock.DBModels;
+using AlarmClock.Managers;
 using AlarmClock.Misc;
 using AlarmClock.Properties;
 using AlarmClock.Repositories;
+using AlarmClock.Tools;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -123,39 +125,40 @@ namespace AlarmClock.Models
         #region commands
         public ICommand ClickUpHour =>
             _clickUpHour ??
-           (_clickUpHour = new RelayCommand(
+           (_clickUpHour = new RelayCommand<object>(
                 delegate { ChangeAlarm(ref _hour, TimeProp.Hour, 1, MaxHours); }
             ));
 
         public ICommand ClickDownHour =>
             _clickDownHour ??
-           (_clickDownHour = new RelayCommand(
+           (_clickDownHour = new RelayCommand<object>(
                 delegate { ChangeAlarm(ref _hour, TimeProp.Hour, -1, MaxHours); }
            ));
 
         public ICommand ClickUpMinute =>
             _clickUpMinute ??
-           (_clickUpMinute = new RelayCommand(
+           (_clickUpMinute = new RelayCommand<object>(
                delegate { ChangeAlarm(ref _minute, TimeProp.Minute, 1, MaxMinutes); }
            ));
 
         public ICommand ClickDownMinute =>
             _clickDownMinute ??
-           (_clickDownMinute = new RelayCommand(
+           (_clickDownMinute = new RelayCommand<object>(
                 delegate { ChangeAlarm(ref _minute, TimeProp.Minute, -1, MaxMinutes); }
            ));
 
-        public ICommand AddAlarm => _addAlarm ?? (_addAlarm = new RelayCommand(AddAlarmExecute, CanAddAlarmExecute));
+        public ICommand AddAlarm => _addAlarm ?? (_addAlarm = new RelayCommand<object>(AddAlarmExecute, CanAddAlarmExecute));
 
-        public ICommand DeleteAlarm => _deleteAlarm ?? (_deleteAlarm = new RelayCommand(DeleteAlarmExecute));
+        public ICommand DeleteAlarm => _deleteAlarm ?? (_deleteAlarm = new RelayCommand<object>(DeleteAlarmExecute));
 
-        public ICommand RingAlarm => _ringAlarm ?? (_ringAlarm = new RelayCommand(
+        public ICommand RingAlarm => _ringAlarm ?? (_ringAlarm = new RelayCommand<object>(
             delegate
             {
                 if (IsActive)
                     _isStopped = true;
                 IsActive = !IsActive;
             }));
+
         #endregion
 
         public AlarmItem(ObservableCollection<AlarmItem> owner, IClockRepository clocks, int hour, int minute)
@@ -175,6 +178,7 @@ namespace AlarmClock.Models
         {
             _clocks.Delete(Clock.Id);
             _owner.Remove(this);
+            DBManager.DeleteClock(Clock);
 
             Logger.Log($"Alarm clock {Clock.Id} was deleted.");
         }
@@ -215,7 +219,7 @@ namespace AlarmClock.Models
             {
                 var newTime = GetNewClockTime(_hour, _minute);
                 var clock = obj as Clock ?? _clocks.Add(new Clock(
-                    newTime, newTime.AddDays(1), StationManager.CurrentUser
+                    newTime, newTime.AddDays(1), StationManager<UserRepository>.CurrentUser
                 ));
                 var alarm = new AlarmItem(
                     _owner,
@@ -228,9 +232,11 @@ namespace AlarmClock.Models
                 var index = UserAlarms.FindIndex(item => GetTimeValue(item) > GetTimeValue(alarm));
 
                 _owner.Insert(index == -1 ? _owner.Count : index + 1, alarm);
+                if (obj == null)
+                    DBManager.AddClock(clock);
 
                 Logger.Log($"Alarm clock {clock.Id} with time {clock.NextTrigger} was successfully added" +
-                           $" by the User {StationManager.CurrentUser.Id}.");
+                           $" by the User {StationManager<UserRepository>.CurrentUser.Id}.");
             }
             catch (Exception e)
             {
@@ -251,16 +257,16 @@ namespace AlarmClock.Models
 
         public void KeyDownHandler(object sender, KeyEventArgs e)
         {
-            var myCaretIndex = ((TextBox)sender).CaretIndex;
-            var characters = ((TextBox)sender).Text.ToCharArray();
+            var myCaretIndex = ((TextBox)e.Source).CaretIndex;
+            var characters = ((TextBox)e.Source).Text.ToCharArray();
 
             if (myCaretIndex >= characters.Length)
                 return;
 
             characters[myCaretIndex] = (char)KeyInterop.VirtualKeyFromKey(e.Key);
 
-            ((TextBox)sender).Text = string.Join("", characters);
-            ((TextBox)sender).CaretIndex = myCaretIndex + 1;
+            ((TextBox)e.Source).Text = string.Join("", characters);
+            ((TextBox)e.Source).CaretIndex = myCaretIndex + 1;
 
             e.Handled = true;
         }

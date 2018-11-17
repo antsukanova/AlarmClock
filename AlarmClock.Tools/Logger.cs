@@ -2,9 +2,7 @@
 using System.IO;
 using System.Text;
 
-using Castle.Core.Internal;
-
-namespace AlarmClock.Misc
+namespace AlarmClock.Tools
 {
     public static class Logger
     {
@@ -39,7 +37,7 @@ namespace AlarmClock.Misc
         {
             var stringBuilder = new StringBuilder();
 
-            if (!message.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(message))
                 stringBuilder.AppendLine(message);
 
             while (ex != null)

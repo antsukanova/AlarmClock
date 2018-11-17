@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls;
 using AlarmClock.Managers;
 using AlarmClock.Misc;
+using AlarmClock.Repositories;
 using AlarmClock.ViewModels;
 using Page = AlarmClock.Misc.Page;
 
@@ -16,9 +17,9 @@ namespace AlarmClock
             DataContext = viewModel;
 
             NavigationManager.Initialize(new NavigationModel(this))
-                             .Navigate(StationManager.CurrentUser != null ? Page.Main : Page.SignIn);
+                             .Navigate(StationManager<UserRepository>.CurrentUser != null ? Page.Main : Page.SignIn);
         }
 
-        public ContentControl ContentControl => _contentControl;
+        public ContentControl ContentControl => PageContent;
     }
 }

@@ -1,11 +1,15 @@
-﻿using AlarmClock.Annotations;
-using AlarmClock.Misc;
-using AlarmClock.Models;
-using AlarmClock.Repositories;
+﻿//using AlarmClock.Annotations;
+//using AlarmClock.Misc;
+
+using System;
+using System.Reflection;
+using AlarmClock.DBModels;
+//using AlarmClock.Repositories;
+using AlarmClock.Tools;
 
 namespace AlarmClock.Managers
 {
-    public static class StationManager
+    public static class StationManager<T>
     {
         public static User CurrentUser { get; private set; }
 
@@ -16,9 +20,15 @@ namespace AlarmClock.Managers
             if (user == null)
                 return;
 
-            var realUser = new UserRepository().Find(user.Login);
+            var type = typeof(T);
+            var method = type.GetMethod("Find");
+            if (method == null)
+                return;
+            var realUser = method.Invoke(Activator.CreateInstance(type, null), new object[] { user.Login });
+            //            var realUser = new UserRepository().Find(user.Login);
 
-            if (realUser != null && user.Password.Equals(realUser.Password))
+//            if (realUser != null && user.Password.Equals(realUser.Password))
+            if (realUser != null && user.Password.Equals(realUser.GetType().GetProperty("Password")?.GetValue(realUser, null)))
             {
                 CurrentUser = user;
                 Logger.Log($"Deserialized User {CurrentUser.Login} was successfully authorized.");
@@ -30,12 +40,12 @@ namespace AlarmClock.Managers
             }
         }
 
-        public static void Authorize([NotNull] User user)
+        public static void Authorize(User user)//[NotNull] User user
         {
             CurrentUser = user;
             Logger.Log($"User {CurrentUser.Login} was successfully authorized.");
 
-            SerializationManager.SerializeCurrentUser();
+            SerializationManager.SerializeCurrentUser<T>();
         }
 
         public static void SignOut()

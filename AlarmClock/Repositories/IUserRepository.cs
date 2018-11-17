@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using AlarmClock.Models;
+using AlarmClock.DBModels;
 
 namespace AlarmClock.Repositories
 {

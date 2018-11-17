@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using AlarmClock.Properties;
 using AlarmClock.Views;
 

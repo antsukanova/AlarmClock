@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
-using AlarmClock.Misc;
-using AlarmClock.Models;
-using AlarmClock.Repositories;
+using AlarmClock.DBModels;
+using AlarmClock.Tools;
 
 namespace AlarmClock.Managers
 {
     public static class SerializationManager
     {
-    #region Last User
-        public static void SerializeCurrentUser()
+        #region Last User
+        public static void SerializeCurrentUser<T>()
         {
             try
             {
-                SerializationHelper.Serialize(StationManager.CurrentUser, FileFolderHelper.LastUserFilePath);
+                SerializationHelper.Serialize(StationManager<T>.CurrentUser, FileFolderHelper.LastUserFilePath);
                 Logger.Log("Current user was successfully serialized.");
             }
             catch (Exception ex)
@@ -41,7 +39,7 @@ namespace AlarmClock.Managers
             return user;
         }
 
-        internal static void ClearSerializedLastUser()
+        public static void ClearSerializedLastUser()
         {
             try
             {
@@ -58,11 +56,11 @@ namespace AlarmClock.Managers
         #endregion
 
         #region Alarms
-        public static void SerializeAlarms(IClockRepository repo)
+        public static void SerializeAlarms(List<Clock> repo)
         {
             try
             {
-                SerializationHelper.Serialize(repo.All(), FileFolderHelper.AlarmsFilePath);
+                SerializationHelper.Serialize(repo, FileFolderHelper.AlarmsFilePath);
                 Logger.Log("Alarm clocks were successfully serialized.");
             }
             catch (Exception ex)
@@ -104,11 +102,11 @@ namespace AlarmClock.Managers
         #endregion
 
         #region Users
-        public static void SerializeUsers(IUserRepository repo)
+        public static void SerializeUsers(List<User> repo)
         {
             try
             {
-                SerializationHelper.Serialize(repo.All(), FileFolderHelper.UsersFilePath);
+                SerializationHelper.Serialize(repo, FileFolderHelper.UsersFilePath);
                 Logger.Log("Users were successfully serialized.");
             }
             catch (Exception ex)
@@ -133,7 +131,7 @@ namespace AlarmClock.Managers
             }
         }
 
-        internal static void ClearSerializedUsers()
+        public static void ClearSerializedUsers()
         {
             try
             {

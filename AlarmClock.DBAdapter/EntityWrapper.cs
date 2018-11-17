@@ -1,80 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using KMA.APZRPMJ2018.WalletSimulator.DBModels;
+using System.Data.Entity;
+using AlarmClock.DBModels;
 
-namespace KMA.APZRPMJ2018.WalletSimulator.DBAdapter
+namespace AlarmClock.DBAdapter
 {
     public static class EntityWrapper
     {
-        public static bool UserExists(string login)
-        {
-            using (var context = new WalletDBContext())
-            {
-                return context.Users.Any(u => u.Login == login);
-            }
-        }
+        public static bool UserExists(string login) =>
+            new ClockDBContext()
+                .Users
+                .Any(u => u.Login == login);
 
-        public static User GetUserByLogin(string login)
-        {
-            using (var context = new WalletDBContext())
-            {
-                return context.Users.Include(u=>u.Wallets).FirstOrDefault(u => u.Login == login);
-            }
-        }
+        public static User GetUserByLogin(string login) =>
+            new ClockDBContext()
+                .Users
+                .Include(u => u.Clocks)
+                .FirstOrDefault(u => u.Login == login);
 
-        public static User GetUserByGuid(Guid guid)
-        {
-            using (var context = new WalletDBContext())
-            {
-                return context.Users.Include(u => u.Wallets).FirstOrDefault(u => u.Guid == guid);
-            }
-        }
+        public static User GetUserByGuid(Guid guid) =>
+            new ClockDBContext()
+                .Users
+                .Include(u => u.Clocks)
+                .FirstOrDefault(u => u.Id == guid);
 
-        public static List<User> GetAllUsers(Guid walletGuid)
-        {
-            using (var context = new WalletDBContext())
-            {
-                return context.Users.Where(u => u.Wallets.All(r => r.Guid != walletGuid)).ToList();
-            }
-        }
+        public static List<User> GetAllUsers(Guid clockGuid) =>
+                new ClockDBContext()
+                    .Users
+                    .Where(u => u.Clocks.All(r => r.Id != clockGuid))
+                    .ToList();
 
         public static void AddUser(User user)
         {
-            using (var context = new WalletDBContext())
+            using (var context = new ClockDBContext())
             {
                 context.Users.Add(user);
                 context.SaveChanges();
             }
         }
 
-        public static void AddWallet(Wallet wallet)
+        public static void AddClock(Clock clock)
         {
-            using (var context = new WalletDBContext())
+            using (var context = new ClockDBContext())
             {
-                wallet.DeleteDatabaseValues();
-                context.Wallets.Add(wallet);
+                clock.DeleteDatabaseValues();
+                context.Clocks.Add(clock);
                 context.SaveChanges();
             }
         }
 
-        public static void SaveWallet(Wallet wallet)
+        public static void SaveClock(Clock clock)
         {
-            using (var context = new WalletDBContext())
+            using (var context = new ClockDBContext())
             {
-                context.Entry(wallet).State = EntityState.Modified;
+                context.Entry(clock).State = EntityState.Modified;
                 context.SaveChanges();
             }
         }
         
-        public static void DeleteWallet(Wallet selectedWallet)
+        public static void DeleteClock(Clock selectedClock)
         {
-            using (var context = new WalletDBContext())
+            using (var context = new ClockDBContext())
             {
-                selectedWallet.DeleteDatabaseValues();
-                context.Wallets.Attach(selectedWallet);
-                context.Wallets.Remove(selectedWallet);
+                selectedClock.DeleteDatabaseValues();
+                context.Clocks.Attach(selectedClock);
+                context.Clocks.Remove(selectedClock);
                 context.SaveChanges();
             }
         }

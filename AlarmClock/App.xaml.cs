@@ -1,8 +1,9 @@
 ﻿using System.Windows;
 
 using AlarmClock.Managers;
-using AlarmClock.Misc;
 using AlarmClock.Repositories;
+using AlarmClock.Tools;
+using AlarmClock.ViewModels;
 
 namespace AlarmClock
 {
@@ -12,7 +13,10 @@ namespace AlarmClock
 
         private void OnExit(object sender, ExitEventArgs e)
         {
-            SerializationManager.SerializeAlarms(new ClockRepository());
+            SerializationManager.SerializeAlarms(new ClockRepository().All());
+            if (MainViewModel.CurrentUser != null)
+                MainViewModel.SaveClock();
+
             Logger.Log("App closed.");
         }
     }

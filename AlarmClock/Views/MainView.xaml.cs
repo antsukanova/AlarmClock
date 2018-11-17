@@ -1,10 +1,6 @@
 ﻿using AlarmClock.ViewModels;
 
 using System;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Linq;
-using System.Windows;
 
 namespace AlarmClock.Views
 {

@@ -1,20 +1,14 @@
-﻿using KMA.APZRPMJ2018.WalletSimulator.DBAdapter;
-using KMA.APZRPMJ2018.WalletSimulator.DBModels;
-using KMA.APZRPMJ2018.WalletSimulator.Tools;
+﻿using AlarmClock.DBModels;
+using AlarmClock.DBAdapter;
+using System.Collections.Generic;
 
-namespace KMA.APZRPMJ2018.WalletSimulator.Managers
+namespace AlarmClock.Managers
 {
     public class DBManager
     {
-        public static bool UserExists(string login)
-        {
-            return EntityWrapper.UserExists(login);
-        }
+        public static bool UserExists(string login) => EntityWrapper.UserExists(login);
 
-        public static User GetUserByLogin(string login)
-        {
-            return EntityWrapper.GetUserByLogin(login);
-        }
+        public static User GetUserByLogin(string login) => EntityWrapper.GetUserByLogin(login);
 
         public static void AddUser(User user)
         {
@@ -23,20 +17,28 @@ namespace KMA.APZRPMJ2018.WalletSimulator.Managers
 
         internal static User CheckCachedUser(User userCandidate)
         {
-            var userInStorage = EntityWrapper.GetUserByGuid(userCandidate.Guid);
-            if (userInStorage != null && userInStorage.CheckPassword(userCandidate))
+            var userInStorage = EntityWrapper.GetUserByGuid(userCandidate.Id);
+            if (userInStorage != null && userInStorage.IsPasswordCorrect(userCandidate))
                 return userInStorage;
             return null;
         }
         
-        public static void DeleteWallet(Wallet selectedWallet)
+        public static void DeleteClock(Clock selectedClock)
         {
-            EntityWrapper.DeleteWallet(selectedWallet);
+            EntityWrapper.DeleteClock(selectedClock);
         }
 
-        public static void AddWallet(Wallet wallet)
+        public static void AddClock(Clock clock)
         {
-            EntityWrapper.AddWallet(wallet);
+            EntityWrapper.AddClock(clock);
+        }
+
+        public static List<Clock> GetClocksByUser(User user) =>
+            EntityWrapper.GetUserByGuid(user.Id).Clocks;
+
+        public static void SaveClock(Clock selectedClock)
+        {
+            EntityWrapper.SaveClock(selectedClock);
         }
     }
 }

@@ -5,9 +5,10 @@ using System.Windows.Input;
 
 using AlarmClock.Managers;
 using AlarmClock.Misc;
-using AlarmClock.Models;
+using AlarmClock.DBModels;
 using AlarmClock.Properties;
 using AlarmClock.Repositories;
+using AlarmClock.Tools;
 
 namespace AlarmClock.ViewModels
 {
@@ -40,9 +41,9 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public ICommand SignIn => _signIn ?? (_signIn = new RelayCommand(SignInExecute, SignInCanExecute));
+        public ICommand SignIn => _signIn ?? (_signIn = new RelayCommand<object>(SignInExecute, SignInCanExecute));
 
-        public ICommand ToSignUp => _toSignUp ?? (_toSignUp = new RelayCommand(ToSignUpExecute));
+        public ICommand ToSignUp => _toSignUp ?? (_toSignUp = new RelayCommand<object>(ToSignUpExecute));
         #endregion
 
         private static void ToSignUpExecute(object obj) => NavigationManager.Navigate(Page.SignUp);
@@ -87,7 +88,7 @@ namespace AlarmClock.ViewModels
                 userRepo.Update(user.UpdateLastVisit());
                 Logger.Log($"User {user.Login} last visit time was successfully updated.");
 
-                StationManager.Authorize(user);
+                StationManager<UserRepository>.Authorize(user);
 
                 return true;
             });

@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace AlarmClock.Misc
+namespace AlarmClock.Tools
 {
     public static class Encrypter
     {

@@ -5,8 +5,9 @@ using System.Windows.Input;
 
 using AlarmClock.Managers;
 using AlarmClock.Misc;
-using AlarmClock.Models;
+using AlarmClock.DBModels;
 using AlarmClock.Properties;
+using AlarmClock.Tools;
 using AlarmClock.Repositories;
 
 namespace AlarmClock.ViewModels
@@ -73,9 +74,9 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public ICommand SignUp => _signUp ?? (_signUp = new RelayCommand(SignUpExecute, SignUpCanExecute));
+        public ICommand SignUp => _signUp ?? (_signUp = new RelayCommand<object>(SignUpExecute, SignUpCanExecute));
 
-        public ICommand ToSignIn => _toSignIn ?? (_toSignIn = new RelayCommand(ToSignInExecute));
+        public ICommand ToSignIn => _toSignIn ?? (_toSignIn = new RelayCommand<object>(ToSignInExecute));
         #endregion
 
         private static void ToSignInExecute(object obj) => NavigationManager.Navigate(Page.SignIn);
@@ -88,8 +89,8 @@ namespace AlarmClock.ViewModels
                 var userRepo = new UserRepository();
                 var user = new User(Name, Surname, Login, Email, Password);
 
-                Logger.Log("User tried to sign up with credentials:" +
-                           $" Name - {Name}, Surname - {Surname}, Login - {Login}, Email - {Email}");
+                Logger.Log("User tried to sign up with credentials: " +
+                           $"Name - {Name}, Surname - {Surname}, Login - {Login}, Email - {Email}");
 
                 if (!new EmailAddressAttribute().IsValid(Email))
                 {
@@ -112,11 +113,12 @@ namespace AlarmClock.ViewModels
                 }
 
                 userRepo.Add(user);
+                DBManager.AddUser(user);
                 Logger.Log($"User {user.Login} was successfully added to the db.");
 
-                SerializationManager.SerializeUsers(userRepo);
+                SerializationManager.SerializeUsers(userRepo.All());
 
-                StationManager.Authorize(user);
+                StationManager<UserRepository>.Authorize(user);
 
                 return true;
             });

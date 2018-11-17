@@ -8,8 +8,11 @@ using System.Windows.Threading;
 
 using AlarmClock.Managers;
 using AlarmClock.Misc;
-using AlarmClock.Models;
+using AlarmClock.DBModels;
 using AlarmClock.Repositories;
+using AlarmClock.Models;
+using AlarmClock.Tools;
+using System.Collections.Generic;
 
 namespace AlarmClock.ViewModels
 {
@@ -26,6 +29,8 @@ namespace AlarmClock.ViewModels
         #endregion
 
         #region properties
+        private static IEnumerable<AlarmItem> UserAlarms => AlarmClocks[0].UserAlarms;
+
         public string CurrentTime
         {
             get => _currentTime;
@@ -37,16 +42,16 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public ObservableCollection<AlarmItem> AlarmClocks { get; } =
+        public static ObservableCollection<AlarmItem> AlarmClocks { get; } =
             new ObservableCollection<AlarmItem>();
 
         public ClockRepository Clocks { get; } = new ClockRepository();
 
-        public static User CurrentUser => StationManager.CurrentUser;
+        public static User CurrentUser => StationManager<UserRepository>.CurrentUser;
 
-        public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand(SignOutExecute));
+        public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand<object>(SignOutExecute));
 
-        public ICommand AlarmCompleted => _alarmCompleted ?? (_alarmCompleted = new RelayCommand(
+        public ICommand AlarmCompleted => _alarmCompleted ?? (_alarmCompleted = new RelayCommand<object>(
             delegate
             {
                 var alarm = AlarmClocks.SingleOrDefault(item => item.IsActive);
@@ -61,10 +66,21 @@ namespace AlarmClock.ViewModels
             _setTimer.Stop();
             _checkAlarm.Stop();
 
-            StationManager.SignOut();
+            SaveClock();
+
+            StationManager<UserRepository>.SignOut();
 
             NavigationManager.Navigate(Page.SignIn);
         }
+
+        public static void SaveClock()
+        {
+            foreach (var a in UserAlarms)
+            {
+                DBManager.SaveClock(a.Clock);
+            }
+        }
+
         #endregion
 
         public MainViewModel()
@@ -84,9 +100,12 @@ namespace AlarmClock.ViewModels
                 
                 AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));
 
-                Clocks
-                    .ForUser(CurrentUser.Id)
+                DBManager
+                    .GetClocksByUser(CurrentUser)
                     .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
+//                Clocks// from serialization
+//                    .ForUser(CurrentUser.Id)
+//                    .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
 
                 Logger.Log($"Loaded Alarm clocks for User {CurrentUser.Login}.");
 
@@ -110,7 +129,7 @@ namespace AlarmClock.ViewModels
             return timer;
         }
 
-        private DispatcherTimer CheckAlarm()
+        private static DispatcherTimer CheckAlarm()
         {
             var timer = new DispatcherTimer
             {
@@ -120,12 +139,11 @@ namespace AlarmClock.ViewModels
             timer.Tick += delegate
             {
                 var dt = DateTime.Now;
-                var alarms = AlarmClocks[0].UserAlarms;
 
-                if (alarms.Any(item => item.IsActive))
+                if (UserAlarms.Any(item => item.IsActive))
                     return;
 
-                foreach (var ai in alarms)
+                foreach (var ai in UserAlarms)
                 {
                     if (!ai.Equals(dt) || ai.IsStopped)
                         continue;

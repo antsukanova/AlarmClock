@@ -5,7 +5,7 @@ namespace AlarmClock.Managers
     /// <summary>
     /// Singleton manager used to help with navigation between pages
     /// </summary>
-    class NavigationManager
+    internal class NavigationManager
     {
         private static readonly object Lock = new object();
 

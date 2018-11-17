@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using AlarmClock.Managers;
-using AlarmClock.Models;
+using AlarmClock.DBModels;
 
 namespace AlarmClock.Repositories
 {
@@ -22,7 +22,7 @@ namespace AlarmClock.Repositories
 
         public List<Clock> ForUser(Guid id) =>
             Clocks
-                .Where(c => c.Owner.Id == id).ToList();
+                .Where(c => c.Owner != null && c.Owner.Id == id).ToList();
 
         public Clock Add(Clock clock)
         {
@@ -36,7 +36,7 @@ namespace AlarmClock.Repositories
         public Guid Delete(Guid id)
         {
             Clocks.Remove(
-                Clocks.Single(c => c.Id == id)
+                Clocks.SingleOrDefault(c => c.Id == id)
             );
 
             return id;

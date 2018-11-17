@@ -2,7 +2,7 @@
 using System.Linq;
 
 using AlarmClock.Managers;
-using AlarmClock.Models;
+using AlarmClock.DBModels;
 
 namespace AlarmClock.Repositories
 {
