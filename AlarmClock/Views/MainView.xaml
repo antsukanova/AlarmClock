@@ -1,0 +1,152 @@
+﻿<UserControl x:Class="AlarmClock.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wi="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:misc="clr-namespace:AlarmClock.Misc"
+        mc:Ignorable="d"
+        Height="Auto" Width="Auto" MinHeight="200" MinWidth="800">
+    <UserControl.Resources>
+        <misc:CountConverter x:Key="CountConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <SolidColorBrush x:Key="BackgroundBrush" Color="White"/>
+        <Storyboard x:Key="Blinking" RepeatBehavior="0:2:00">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" AutoReverse="True"
+                To="0.1"
+                Duration="0:0:2.0"
+                Completed="StoryboardCompleted"/>
+        </Storyboard>
+        <Style x:Key="ImageEnabled" TargetType="Image">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.25"></Setter>
+                </Trigger>
+                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="blinking" Storyboard="{StaticResource Blinking}">
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="blinking"/>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ToolButton" TargetType="Control">
+            <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BackgroundBrush}"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+
+        <ControlTemplate x:Key="AlarmClockTemplate" TargetType="ContentControl">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsEnabled}">
+                        <TextBox Text="{Binding Hour, UpdateSourceTrigger=PropertyChanged}">
+                            <wi:Interaction.Triggers>
+                                <wi:EventTrigger  EventName="KeyDown">
+                                    <i:CallMethodAction
+                                        TargetObject="{Binding}"
+                                        MethodName="KeyDownHandler"/>
+                                </wi:EventTrigger>
+                            </wi:Interaction.Triggers>
+                        </TextBox>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                            <Button Command="{Binding ClickUpHour}" Content="˄" Height="32" Width="20" />
+                            <Button Command="{Binding ClickDownHour}" Content="˅" Height="32" Width="20" />
+                        </StackPanel>
+                    </StackPanel>
+                    <Label Content=":" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+                    <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsEnabled}">
+                        <TextBox Text="{Binding Minute, UpdateSourceTrigger=PropertyChanged}">
+                            <wi:Interaction.Triggers>
+                                <wi:EventTrigger EventName="KeyDown">
+                                    <i:CallMethodAction
+                                        TargetObject="{Binding}"
+                                        MethodName="KeyDownHandler"/>
+                                </wi:EventTrigger>
+                            </wi:Interaction.Triggers>
+                        </TextBox>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                            <Button Command="{Binding ClickUpMinute}" Content="˄" Height="32" Width="20" />
+                            <Button Command="{Binding ClickDownMinute}" Content="˅" Height="32" Width="20" />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center" Width="80">
+                        <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                            ToolTip="Add alarm clock" Command="{Binding AddAlarm}"
+                            Visibility="{Binding IsAddEnabled, Converter={StaticResource BoolToVisibility}}">
+                            <Image Source="/AlarmClock;component/resources/btns/add.png" Height="24" Style="{StaticResource ImageEnabled}"/>
+                        </Button>
+                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
+                            Visibility="{Binding IsRingEnabled, Converter={StaticResource BoolToVisibility}}"/>
+                        <Button Style="{StaticResource ToolButton}" HorizontalAlignment="Center" 
+                            ToolTip="Ring alarm clock" Command="{Binding RingAlarm}"
+                            Visibility="{Binding IsRingEnabled, Converter={StaticResource BoolToVisibility}}">
+                            <Image Source="/AlarmClock;component/resources/btns/bell.png" Height="24" Style="{StaticResource ImageEnabled}"/>
+                        </Button>
+                    </StackPanel>
+                    <Button Style="{StaticResource ToolButton}" Command="{Binding DeleteAlarm}"
+                        ToolTip="Delete alarm" VerticalAlignment="Top" Margin="10,0,0,0"
+                        Opacity="{Binding IsDeleteEnabled}">
+                        <Image Source="/AlarmClock;component/resources/btns/delete.png" Height="16"/>
+                    </Button>
+                </StackPanel>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
+                           Visibility="{Binding IsBaseAlarm, Converter={StaticResource BoolToVisibility}}"/>
+            </StackPanel>
+        </ControlTemplate>
+    </UserControl.Resources>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="80*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="170"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Text="{Binding CurrentTime, UpdateSourceTrigger=PropertyChanged}" FontSize="24"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center">
+            <Image Source="/AlarmClock;component/resources/btns/man-user.png" Height="32"/>
+            <Label Content="{Binding CurrentUser.Login}" HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Center" FontSize="24"/>
+        </StackPanel>
+        <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource ToolButton}" ToolTip="Sign Out" 
+            Margin="20,0,0,0" Command="{Binding SignOut}" Name="SignOut" HorizontalAlignment="Center">
+            <Image Source="/AlarmClock;component/resources/btns/signout.png" Height="32"/>
+        </Button>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <ListBox ItemsSource="{Binding AlarmClocks}" SelectedItem="{Binding SelectedAlarm}"
+                     BorderThickness="0" HorizontalContentAlignment="Center"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Template="{StaticResource AlarmClockTemplate}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <StatusBar Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3">
+            <StatusBarItem>
+                <TextBlock Text="{Binding AlarmClocks.Count, Converter={StaticResource CountConverter}}"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</UserControl>
