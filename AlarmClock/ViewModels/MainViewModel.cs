@@ -9,7 +9,6 @@ using System.Windows.Threading;
 using AlarmClock.Managers;
 using AlarmClock.Misc;
 using AlarmClock.DBModels;
-using AlarmClock.Repositories;
 using AlarmClock.Models;
 using AlarmClock.Tools;
 using System.Collections.Generic;
@@ -42,12 +41,10 @@ namespace AlarmClock.ViewModels
             }
         }
 
-        public static ObservableCollection<AlarmItem> AlarmClocks { get; } =
+        public static ObservableCollection<AlarmItem> AlarmClocks { get; private set; } =
             new ObservableCollection<AlarmItem>();
 
-        public ClockRepository Clocks { get; } = new ClockRepository();
-
-        public static User CurrentUser => StationManager<UserRepository>.CurrentUser;
+        public static User CurrentUser => StationManager.CurrentUser;
 
         public ICommand SignOut => _signOut ?? (_signOut = new RelayCommand<object>(SignOutExecute));
 
@@ -66,19 +63,19 @@ namespace AlarmClock.ViewModels
             _setTimer.Stop();
             _checkAlarm.Stop();
 
-            SaveClock();
+            SaveClocks();
 
-            StationManager<UserRepository>.SignOut();
+            StationManager.SignOut();
+
+            AlarmClocks = new ObservableCollection<AlarmItem>();
 
             NavigationManager.Navigate(Page.SignIn);
         }
 
-        public static void SaveClock()
+        public static void SaveClocks()
         {
             foreach (var a in UserAlarms)
-            {
-                DBManager.SaveClock(a.Clock);
-            }
+                DbManager.SaveClock(a.Clock);
         }
 
         #endregion
@@ -92,25 +89,25 @@ namespace AlarmClock.ViewModels
         private async void StartUp()
         {
             LoaderManager.Instance.ShowLoader();
+
             (_setTimer = SetTimer()).Start();
             (_checkAlarm = CheckAlarm()).Start();
+
             await Task.Run(() =>
             {
                 var now = DateTime.Now;
                 
-                AlarmClocks.Add(new AlarmItem(AlarmClocks, Clocks, now.Hour, now.Minute));
+                AlarmClocks.Add(new AlarmItem(AlarmClocks, now.Hour, now.Minute));
 
-                DBManager
+                DbManager
                     .GetClocksByUser(CurrentUser)
-                    .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
-//                Clocks// from serialization
-//                    .ForUser(CurrentUser.Id)
-//                    .ForEach(clock => AlarmClocks[0].AddAlarm.Execute(clock));
+                    .ForEach(clock => AlarmClocks[0].AddClockToCollection(clock));
 
                 Logger.Log($"Loaded Alarm clocks for User {CurrentUser.Login}.");
 
                 return true;
             });
+
             LoaderManager.Instance.HideLoader();
         }
 

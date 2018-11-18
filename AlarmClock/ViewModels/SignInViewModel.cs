@@ -7,7 +7,6 @@ using AlarmClock.Managers;
 using AlarmClock.Misc;
 using AlarmClock.DBModels;
 using AlarmClock.Properties;
-using AlarmClock.Repositories;
 using AlarmClock.Tools;
 
 namespace AlarmClock.ViewModels
@@ -51,16 +50,16 @@ namespace AlarmClock.ViewModels
         private async void SignInExecute(object obj)
         {
             LoaderManager.Instance.ShowLoader();
+
             var result = await Task.Run(() =>
             {
                 User user;
-                var userRepo = new UserRepository();
 
                 Logger.Log($"User tried to sign in with email or login - {EmailOrLogin}.");
 
                 try
                 {
-                    user = userRepo.Find(EmailOrLogin);
+                    user = DbManager.GetUserByLogin(EmailOrLogin);
                 }
                 catch (Exception ex)
                 {
@@ -85,15 +84,16 @@ namespace AlarmClock.ViewModels
                     return false;
                 }
 
-                userRepo.Update(user.UpdateLastVisit());
+                DbManager.UpdateUser(user.UpdateLastVisit());
                 Logger.Log($"User {user.Login} last visit time was successfully updated.");
 
-                StationManager<UserRepository>.Authorize(user);
+                StationManager.Authorize(user);
 
                 return true;
             });
 
             LoaderManager.Instance.HideLoader();
+
             if (result)
                 NavigationManager.Navigate(Page.Main);
         }

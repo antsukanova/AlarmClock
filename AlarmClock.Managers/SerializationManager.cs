@@ -9,11 +9,11 @@ namespace AlarmClock.Managers
     public static class SerializationManager
     {
         #region Last User
-        public static void SerializeCurrentUser<T>()
+        public static void SerializeCurrentUser()
         {
             try
             {
-                SerializationHelper.Serialize(StationManager<T>.CurrentUser, FileFolderHelper.LastUserFilePath);
+                SerializationHelper.Serialize(StationManager.CurrentUser, FileFolderHelper.LastUserFilePath);
                 Logger.Log("Current user was successfully serialized.");
             }
             catch (Exception ex)

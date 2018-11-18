@@ -4,11 +4,11 @@ using AlarmClock.DBModels;
 
 namespace AlarmClock.DBAdapter
 {
-    internal class ClockDBContext : DbContext
+    internal class ClockDbContext : DbContext
     {
-        public ClockDBContext() : base("NewClockDB")
+        public ClockDbContext() : base("NewClockDB")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ClockDBContext, Configuration>(true));
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ClockDbContext, Configuration>(true));
         }
 
         public DbSet<User> Users { get; set; }

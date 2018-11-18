@@ -56,7 +56,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ClockDBContext.cs" />
+    <Compile Include="ClockDbContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

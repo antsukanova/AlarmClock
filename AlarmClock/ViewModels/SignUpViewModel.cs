@@ -86,7 +86,6 @@ namespace AlarmClock.ViewModels
             LoaderManager.Instance.ShowLoader();
             var result = await Task.Run(() =>
             {
-                var userRepo = new UserRepository();
                 var user = new User(Name, Surname, Login, Email, Password);
 
                 Logger.Log("User tried to sign up with credentials: " +
@@ -102,7 +101,7 @@ namespace AlarmClock.ViewModels
                     return false;
                 }
 
-                if (userRepo.Exists(user))
+                if (DbManager.UserExists(user.Login))
                 {
                     var msg = string.Format(Resources.UserAlreadyExistsError, Email, Login);
 
@@ -112,13 +111,10 @@ namespace AlarmClock.ViewModels
                     return false;
                 }
 
-                userRepo.Add(user);
-                DBManager.AddUser(user);
+                DbManager.AddUser(user);
                 Logger.Log($"User {user.Login} was successfully added to the db.");
 
-                SerializationManager.SerializeUsers(userRepo.All());
-
-                StationManager<UserRepository>.Authorize(user);
+                StationManager.Authorize(user);
 
                 return true;
             });

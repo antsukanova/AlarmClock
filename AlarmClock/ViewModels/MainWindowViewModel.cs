@@ -2,6 +2,7 @@
 
 using AlarmClock.Managers;
 using AlarmClock.Misc;
+using AlarmClock.Tools;
 
 namespace AlarmClock.ViewModels
 {

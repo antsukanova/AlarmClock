@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 
-namespace AlarmClock.Misc
+namespace AlarmClock.Tools
 {
-    internal interface ILoaderOwner : INotifyPropertyChanged
+    public interface ILoaderOwner : INotifyPropertyChanged
     {
         Visibility LoaderVisibility { get; set; }
         bool IsEnabled { get; set; }

@@ -13,9 +13,8 @@ namespace AlarmClock
 
         private void OnExit(object sender, ExitEventArgs e)
         {
-            SerializationManager.SerializeAlarms(new ClockRepository().All());
             if (MainViewModel.CurrentUser != null)
-                MainViewModel.SaveClock();
+                MainViewModel.SaveClocks();
 
             Logger.Log("App closed.");
         }

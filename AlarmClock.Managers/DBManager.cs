@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace AlarmClock.Managers
 {
-    public class DBManager
+    public static class DbManager
     {
         public static bool UserExists(string login) => EntityWrapper.UserExists(login);
 
@@ -15,23 +15,17 @@ namespace AlarmClock.Managers
             EntityWrapper.AddUser(user);
         }
 
-        internal static User CheckCachedUser(User userCandidate)
+        public static void UpdateUser(User user)
         {
-            var userInStorage = EntityWrapper.GetUserByGuid(userCandidate.Id);
-            if (userInStorage != null && userInStorage.IsPasswordCorrect(userCandidate))
-                return userInStorage;
-            return null;
+            EntityWrapper.UpdateUser(user);
         }
-        
+
         public static void DeleteClock(Clock selectedClock)
         {
             EntityWrapper.DeleteClock(selectedClock);
         }
 
-        public static void AddClock(Clock clock)
-        {
-            EntityWrapper.AddClock(clock);
-        }
+        public static Clock AddClock(Clock clock) => EntityWrapper.AddClock(clock);
 
         public static List<Clock> GetClocksByUser(User user) =>
             EntityWrapper.GetUserByGuid(user.Id).Clocks;

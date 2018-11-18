@@ -28,7 +28,6 @@ namespace AlarmClock.Models
         private const byte MaxHours = (byte) (TimeSpan.TicksPerDay / TimeSpan.TicksPerHour) - 1;
 
         private readonly ObservableCollection<AlarmItem> _owner;
-        private readonly IClockRepository _clocks;
 
         private int _hour;
         private int _minute;
@@ -161,10 +160,9 @@ namespace AlarmClock.Models
 
         #endregion
 
-        public AlarmItem(ObservableCollection<AlarmItem> owner, IClockRepository clocks, int hour, int minute)
+        public AlarmItem(ObservableCollection<AlarmItem> owner, int hour, int minute)
         {
             _owner = owner;
-            _clocks = clocks;
             _hour = hour;
             _minute = minute;
         }
@@ -176,9 +174,8 @@ namespace AlarmClock.Models
 
         private void DeleteAlarmExecute(object obj)
         {
-            _clocks.Delete(Clock.Id);
+            DbManager.DeleteClock(Clock);
             _owner.Remove(this);
-            DBManager.DeleteClock(Clock);
 
             Logger.Log($"Alarm clock {Clock.Id} was deleted.");
         }
@@ -218,31 +215,32 @@ namespace AlarmClock.Models
             try
             {
                 var newTime = GetNewClockTime(_hour, _minute);
-                var clock = obj as Clock ?? _clocks.Add(new Clock(
-                    newTime, newTime.AddDays(1), StationManager<UserRepository>.CurrentUser
-                ));
-                var alarm = new AlarmItem(
-                    _owner,
-                    _clocks,
-                    clock.NextTrigger.Hour,
-                    clock.NextTrigger.Minute)
-                {
-                    Clock = clock
-                };
-                var index = UserAlarms.FindIndex(item => GetTimeValue(item) > GetTimeValue(alarm));
+                var clock = DbManager.AddClock(
+                    new Clock(newTime, newTime.AddDays(1), StationManager.CurrentUser)
+                );
 
-                _owner.Insert(index == -1 ? _owner.Count : index + 1, alarm);
-                if (obj == null)
-                    DBManager.AddClock(clock);
+                AddClockToCollection(clock);
 
                 Logger.Log($"Alarm clock {clock.Id} with time {clock.NextTrigger} was successfully added" +
-                           $" by the User {StationManager<UserRepository>.CurrentUser.Id}.");
+                           $" by the User {StationManager.CurrentUser.Id}.");
             }
             catch (Exception e)
             {
                 MessageBox.Show(Resources.CantParseTimeError);
                 Logger.Log(e, Resources.CantParseTimeError);
             }
+        }
+
+        public void AddClockToCollection(Clock clock)
+        {
+            var alarm = new AlarmItem(
+                    _owner, clock.NextTrigger.Hour, clock.NextTrigger.Minute
+                )
+                { Clock = clock };
+
+            var index = UserAlarms.FindIndex(item => GetTimeValue(item) > GetTimeValue(alarm));
+
+            _owner.Insert(index == -1 ? _owner.Count : index + 1, alarm);
         }
 
         private static DateTime GetNewClockTime(int hour, int minute)

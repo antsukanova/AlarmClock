@@ -112,7 +112,7 @@
     <Compile Include="Managers\LoaderManager.cs" />
     <Compile Include="Misc\CountConverter.cs" />
     <Compile Include="Misc\IContentWindow.cs" />
-    <Compile Include="Misc\ILoaderOwner.cs" />
+    <Compile Include="Misc\NotifyPropertyChanged.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Tests\SignUpTest.cs" />
     <Compile Include="Tests\SignInTest.cs" />
@@ -133,12 +133,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Misc\NotifyPropertyChanged.cs" />
     <Compile Include="Models\AlarmItem.cs" />
     <Compile Include="Repositories\IClockRepository.cs" />
     <Compile Include="Repositories\IUserRepository.cs" />
-    <Compile Include="Repositories\ClockRepository.cs" />
-    <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Managers\NavigationManager.cs" />
     <Compile Include="Misc\NavigationModel.cs" />
     <Compile Include="Misc\RelayCommand.cs" />
