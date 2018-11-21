@@ -47,7 +47,7 @@
 
         <Label Content="Name:" Grid.Column="0" Grid.Row="0" />
         <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
-                 Name="Name" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                 Name="UserName" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 
         <Label Content="Surname:" Grid.Column="0" Grid.Row="1" />
         <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
