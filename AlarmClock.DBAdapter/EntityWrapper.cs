@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
 using AlarmClock.DBModels;
@@ -26,12 +25,6 @@ namespace AlarmClock.DBAdapter
                 return context.Users.Include(u => u.Clocks).FirstOrDefault(u => u.Id == guid);
         }
 
-        public static List<User> GetAllUsers(Guid clockGuid)
-        {
-            using (var context = new ClockDbContext())
-                return context.Users.Where(u => u.Clocks.All(r => r.Id != clockGuid)).ToList();
-        }
-
         public static void AddUser(User user)
         {
             using (var context = new ClockDbContext())
@@ -54,7 +47,7 @@ namespace AlarmClock.DBAdapter
         {
             using (var context = new ClockDbContext())
             {
-                clock.DeleteDatabaseValues();
+                clock.ClearReferences();
 
                 context.Clocks.Add(clock);
 
@@ -77,7 +70,7 @@ namespace AlarmClock.DBAdapter
         {
             using (var context = new ClockDbContext())
             {
-                selectedClock.DeleteDatabaseValues();
+                selectedClock.ClearReferences();
 
                 context.Clocks.Attach(selectedClock);
                 context.Clocks.Remove(selectedClock);

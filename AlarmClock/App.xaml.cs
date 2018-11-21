@@ -1,7 +1,5 @@
 ﻿using System.Windows;
 
-using AlarmClock.Managers;
-using AlarmClock.Repositories;
 using AlarmClock.Tools;
 using AlarmClock.ViewModels;
 

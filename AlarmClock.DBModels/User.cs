@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.ModelConfiguration;
+using System.Runtime.Serialization;
+
 using AlarmClock.Tools;
 
 namespace AlarmClock.DBModels
 {
     [Serializable]
+    [DataContract(IsReference = true)]
     public class User
     {
         #region properites
-        public Guid Id { get; private set; }
-        public string Password { get; private set; }
-        public string Salt { get; private set; }
-        public string Name { get; private set; }
-        public string Surname { get; private set; }
-        public string Login { get; private set; }
-        public string Email { get; private set; }
-        public DateTime LastVisited { get; private set; }
-        public List<Clock> Clocks { get; private set; }
-
+        [DataMember] public Guid Id { get; private set; }
+        [DataMember] public string Password { get; private set; }
+        [DataMember] public string Salt { get; private set; }
+        [DataMember] public string Name { get; private set; }
+        [DataMember] public string Surname { get; private set; }
+        [DataMember] public string Login { get; private set; }
+        [DataMember] public string Email { get; private set; }
+        [DataMember] public DateTime LastVisited { get; private set; }
+        [DataMember] public List<Clock> Clocks { get; private set; }
         #endregion
 
         #region constructors
@@ -56,18 +58,6 @@ namespace AlarmClock.DBModels
 
         public bool IsPasswordCorrect(string password) => Encrypter.Hash(Salt + password).Equals(Password);
 
-        public bool IsPasswordCorrect(User userCandidate)
-        {
-            try
-            {
-                return IsPasswordCorrect(userCandidate.Password);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         public User UpdateLastVisit()
         {
             LastVisited = DateTime.Now;
@@ -75,38 +65,21 @@ namespace AlarmClock.DBModels
         }
 
         #region EntityConfiguration
-
         public class UserEntityConfiguration : EntityTypeConfiguration<User>
         {
             public UserEntityConfiguration()
             {
                 ToTable("Users");
                 HasKey(s => s.Id);
-                
-                Property(p => p.Id)
-                    .HasColumnName("Id")
-                    .IsRequired();
-                Property(p => p.Password)
-                    .HasColumnName("Password")
-                    .IsRequired();
-                Property(p => p.Salt)
-                    .HasColumnName("Salt")
-                    .IsRequired();
-                Property(p => p.Name)
-                    .HasColumnName("Name")
-                    .IsOptional();
-                Property(p => p.Surname)
-                    .HasColumnName("Surname")
-                    .IsRequired();
-                Property(p => p.Login)
-                    .HasColumnName("Login")
-                    .IsRequired();
-                Property(p => p.Email)
-                    .HasColumnName("Email")
-                    .IsRequired();
-                Property(p => p.LastVisited)
-                    .HasColumnName("LastVisited")
-                    .IsRequired();
+
+                Property(p => p.Id).HasColumnName("Id").IsRequired();
+                Property(p => p.Password).HasColumnName("Password").IsRequired();
+                Property(p => p.Salt).HasColumnName("Salt").IsRequired();
+                Property(p => p.Name).HasColumnName("Name").IsOptional();
+                Property(p => p.Surname).HasColumnName("Surname").IsRequired();
+                Property(p => p.Login).HasColumnName("Login").IsRequired();
+                Property(p => p.Email).HasColumnName("Email").IsRequired();
+                Property(p => p.LastVisited).HasColumnName("LastVisited").IsRequired();
 
                 HasMany(s => s.Clocks)
                     .WithRequired(c => c.Owner)

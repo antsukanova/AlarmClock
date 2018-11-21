@@ -8,7 +8,6 @@ using AlarmClock.Misc;
 using AlarmClock.DBModels;
 using AlarmClock.Properties;
 using AlarmClock.Tools;
-using AlarmClock.Repositories;
 
 namespace AlarmClock.ViewModels
 {
