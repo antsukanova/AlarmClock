@@ -7,6 +7,7 @@ namespace AlarmClock.DBAdapter
 {
     public static class EntityWrapper
     {
+        #region Users
         public static bool UserExists(string login)
         {
             using (var context = new ClockDbContext())
@@ -42,7 +43,9 @@ namespace AlarmClock.DBAdapter
                 context.SaveChanges();
             }
         }
+        #endregion
 
+        #region Clocks
         public static Clock AddClock(Clock clock)
         {
             using (var context = new ClockDbContext())
@@ -78,5 +81,6 @@ namespace AlarmClock.DBAdapter
                 context.SaveChanges();
             }
         }
+        #endregion
     }
 }

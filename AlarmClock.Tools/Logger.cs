@@ -24,7 +24,7 @@ namespace AlarmClock.Tools
                 }
                 catch
                 {
-                    // ignored. maybe we could do something?
+                    // ignored
                 }
                 finally
                 {

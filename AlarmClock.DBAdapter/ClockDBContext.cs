@@ -6,10 +6,8 @@ namespace AlarmClock.DBAdapter
 {
     internal class ClockDbContext : DbContext
     {
-        public ClockDbContext() : base("NewClockDB")
-        {
+        public ClockDbContext() : base("NewClockDB") => 
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ClockDbContext, Configuration>(true));
-        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Clock> Clocks { get; set; }

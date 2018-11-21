@@ -134,8 +134,6 @@
     </Page>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Models\AlarmItem.cs" />
-    <Compile Include="Repositories\IClockRepository.cs" />
-    <Compile Include="Repositories\IUserRepository.cs" />
     <Compile Include="Managers\NavigationManager.cs" />
     <Compile Include="Misc\NavigationModel.cs" />
     <Compile Include="Misc\RelayCommand.cs" />
