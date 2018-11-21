@@ -13,20 +13,20 @@ namespace AlarmClock.ViewModels
 {
     internal class SignInViewModel : NotifyPropertyChanged
     {
-        private string _emailOrLogin;
+        private string _login;
         private string _password;
 
         private ICommand _signIn;
         private ICommand _toSignUp;
 
         #region properties
-        public string EmailOrLogin
+        public string Login
         {
-            get => _emailOrLogin;
+            get => _login;
             set
             {
-                _emailOrLogin = value;
-                OnPropertyChanged(nameof(EmailOrLogin));
+                _login = value;
+                OnPropertyChanged(nameof(Login));
             }
         }
 
@@ -55,11 +55,11 @@ namespace AlarmClock.ViewModels
             {
                 User user;
 
-                Logger.Log($"User tried to sign in with email or login - {EmailOrLogin}.");
+                Logger.Log($"User tried to sign in with login - {Login}.");
 
                 try
                 {
-                    user = DbManager.GetUserByLogin(EmailOrLogin);
+                    user = DbManager.GetUserByLogin(Login);
                 }
                 catch (Exception ex)
                 {
@@ -70,7 +70,7 @@ namespace AlarmClock.ViewModels
 
                 if (user == null)
                 {
-                    var msg = string.Format(Resources.UserDoesntExistError, EmailOrLogin);
+                    var msg = string.Format(Resources.UserDoesntExistError, Login);
 
                     MessageBox.Show(msg);
                     Logger.Log(msg);
@@ -99,6 +99,6 @@ namespace AlarmClock.ViewModels
         }
 
         private bool SignInCanExecute(object obj) =>
-            !(string.IsNullOrWhiteSpace(EmailOrLogin) || string.IsNullOrWhiteSpace(Password));
+            !(string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password));
     }
 }

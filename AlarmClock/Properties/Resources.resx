@@ -138,7 +138,7 @@
     <comment>The message to display when user with provided credentials already exists in the system.</comment>
   </data>
   <data name="UserDoesntExistError" xml:space="preserve">
-    <value>User with email or login {0} doesn't exist</value>
+    <value>User with login {0} doesn't exist</value>
     <comment>The message to display when user with such credentials is not found.</comment>
   </data>
   <data name="WrongPasswordError" xml:space="preserve">
