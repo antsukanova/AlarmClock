@@ -1,39 +1,30 @@
 ﻿using AlarmClock.DBModels;
-using AlarmClock.DBAdapter;
+using AlarmClock.ServiceInterface;
 using System.Collections.Generic;
 
 namespace AlarmClock.Managers
 {
     public static class DbManager
     {
-        public static bool UserExists(string login) => EntityWrapper.UserExists(login);
+        public static bool UserExists(string login) => 
+            ClockServiceWrapper.UserExists(login);
 
-        public static User GetUserByLogin(string login) => EntityWrapper.GetUserByLogin(login);
+        public static User GetUserByLogin(string login) => 
+            ClockServiceWrapper.GetUserByLogin(login);
 
-        public static void AddUser(User user)
-        {
-            EntityWrapper.AddUser(user);
-        }
+        public static void AddUser(User user) => ClockServiceWrapper.AddUser(user);
 
-        public static void UpdateUser(User user)
-        {
-            EntityWrapper.UpdateUser(user);
-        }
+        public static void UpdateUser(User user) => ClockServiceWrapper.UpdateUser(user);
 
-        public static void DeleteClock(Clock selectedClock)
-        {
-            EntityWrapper.DeleteClock(selectedClock);
-        }
+        public static void DeleteClock(Clock selectedClock) => 
+            ClockServiceWrapper.DeleteClock(selectedClock);
 
-        public static Clock AddClock(Clock clock) => EntityWrapper.AddClock(clock);
+        public static Clock AddClock(Clock clock) => ClockServiceWrapper.AddClock(clock);
 
         public static List<Clock> GetClocksByUser(User user) =>
-            EntityWrapper.GetUserByGuid(user.Id).Clocks;
+            ClockServiceWrapper.GetUserByGuid(user.Id).Clocks;
 
-        public static void SaveClock(Clock selectedClock)
-        {
-            EntityWrapper.SaveClock(selectedClock);
-        }
+        public static void SaveClock(Clock clock) => ClockServiceWrapper.SaveClock(clock);
     }
 }
 
