@@ -41,10 +41,10 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <Label Content="Email or Login:" Grid.Column="0" Grid.Row="0" />
+        <Label Content="Login:" Grid.Column="0" Grid.Row="0" />
         <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
-                 VerticalContentAlignment="Center" Name="EmailOrLogin"
-                 Text="{Binding EmailOrLogin, UpdateSourceTrigger=PropertyChanged}" />
+                 VerticalContentAlignment="Center" Name="Login"
+                 Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" />
 
         <Label Content="Password:" Grid.Column="0" Grid.Row="1" />
         <PasswordBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"

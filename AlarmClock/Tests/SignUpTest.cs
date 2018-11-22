@@ -118,7 +118,7 @@ namespace AlarmClock.Tests
         #region Helpers
         private static void EnterCredentials()
         {
-            Window.Get<TextBox>("Name").Enter("Name");
+            Window.Get<TextBox>("UserName").Enter("Name");
             Window.Get<TextBox>("Surname").Enter("Surname");
             Window.Get<TextBox>("Email").Enter(Email);
             Window.Get<TextBox>("Login").Enter(Login);

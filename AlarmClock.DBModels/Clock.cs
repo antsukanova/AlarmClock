@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Data.Entity.ModelConfiguration;
+using System.Runtime.Serialization;
 
 namespace AlarmClock.DBModels
 {
     [Serializable]
+    [DataContract(IsReference = true)]
     public class Clock
     {
         #region properites
-        public  Guid Id { get; private set; }
-
-        public DateTime LastTriggered { get; set; }
-
-        public DateTime NextTrigger { get; set; }
-
-        public User Owner { get; private set; }
-
-        public Guid UserId { get; private set; }
+        [DataMember] public Guid Id { get; private set; }
+        [DataMember] public DateTime LastTriggered { get; set; }
+        [DataMember] public DateTime NextTrigger { get; set; }
+        [DataMember] public User Owner { get; private set; }
+        [DataMember] public Guid UserId { get; private set; }
         #endregion
 
         #region constructors
@@ -43,21 +41,13 @@ namespace AlarmClock.DBModels
                 ToTable("Clock");
                 HasKey(s => s.Id);
 
-                Property(p => p.Id)
-                    .HasColumnName("Id")
-                    .IsRequired();
-                Property(p => p.LastTriggered)
-                    .HasColumnName("LastTriggered")
-                    .IsRequired();
-                Property(s => s.NextTrigger)
-                    .HasColumnName("NextTrigger")
-                    .IsRequired();
+                Property(p => p.Id).HasColumnName("Id").IsRequired();
+                Property(p => p.LastTriggered).HasColumnName("LastTriggered").IsRequired();
+                Property(s => s.NextTrigger).HasColumnName("NextTrigger").IsRequired();
             }
         }
         #endregion
-        public void DeleteDatabaseValues()
-        {
-            Owner = null;
-        }
+
+        public void ClearReferences() => Owner = null;
     }
 }

@@ -2,7 +2,6 @@
 using AlarmClock.Managers;
 using AlarmClock.Misc;
 using AlarmClock.Properties;
-using AlarmClock.Repositories;
 using AlarmClock.Tools;
 using System;
 using System.Collections.Generic;
@@ -23,6 +22,7 @@ namespace AlarmClock.Models
             Hour,
             Minute
         }
+
         private static readonly Regex Regex = new Regex("[^0-9.-]+");
         private const byte MaxMinutes = (byte) (TimeSpan.TicksPerMinute / TimeSpan.TicksPerSecond) - 1;
         private const byte MaxHours = (byte) (TimeSpan.TicksPerDay / TimeSpan.TicksPerHour) - 1;
@@ -48,8 +48,8 @@ namespace AlarmClock.Models
         public Clock Clock { get; private set; }
 
         public List<AlarmItem> UserAlarms => _owner
-            .Where(item => !item.IsBaseAlarm)
-            .ToList();
+                                                .Where(item => !item.IsBaseAlarm)
+                                                .ToList();
 
         public string Hour
         {

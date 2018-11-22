@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
 using AlarmClock.DBModels;
@@ -8,6 +7,7 @@ namespace AlarmClock.DBAdapter
 {
     public static class EntityWrapper
     {
+        #region Users
         public static bool UserExists(string login)
         {
             using (var context = new ClockDbContext())
@@ -24,12 +24,6 @@ namespace AlarmClock.DBAdapter
         {
             using (var context = new ClockDbContext())
                 return context.Users.Include(u => u.Clocks).FirstOrDefault(u => u.Id == guid);
-        }
-
-        public static List<User> GetAllUsers(Guid clockGuid)
-        {
-            using (var context = new ClockDbContext())
-                return context.Users.Where(u => u.Clocks.All(r => r.Id != clockGuid)).ToList();
         }
 
         public static void AddUser(User user)
@@ -49,12 +43,14 @@ namespace AlarmClock.DBAdapter
                 context.SaveChanges();
             }
         }
+        #endregion
 
+        #region Clocks
         public static Clock AddClock(Clock clock)
         {
             using (var context = new ClockDbContext())
             {
-                clock.DeleteDatabaseValues();
+                clock.ClearReferences();
 
                 context.Clocks.Add(clock);
 
@@ -77,7 +73,7 @@ namespace AlarmClock.DBAdapter
         {
             using (var context = new ClockDbContext())
             {
-                selectedClock.DeleteDatabaseValues();
+                selectedClock.ClearReferences();
 
                 context.Clocks.Attach(selectedClock);
                 context.Clocks.Remove(selectedClock);
@@ -85,5 +81,6 @@ namespace AlarmClock.DBAdapter
                 context.SaveChanges();
             }
         }
+        #endregion
     }
 }

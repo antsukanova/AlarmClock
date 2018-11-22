@@ -106,7 +106,7 @@ namespace AlarmClock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User with email or login {0} doesn&apos;t exist.
+        ///   Looks up a localized string similar to User with login {0} doesn&apos;t exist.
         /// </summary>
         internal static string UserDoesntExistError {
             get {
