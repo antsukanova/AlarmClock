@@ -5,7 +5,7 @@ using AlarmClock.ServiceInterface;
 
 namespace AlarmClock.ClockService
 {
-    class ClockSimulatorService: IClockContract
+    internal class ClockSimulatorService: IClockContract
     {
         public bool UserExists(string login) => EntityWrapper.UserExists(login);
 

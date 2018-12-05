@@ -26,7 +26,7 @@ namespace AlarmClock.DBModels
         #region constructors
         public User(
             string name, string surname, string login, string email, string password,
-            DateTime lastVisited)// : this()
+            DateTime lastVisited)
         {
             Id = Guid.NewGuid();
 

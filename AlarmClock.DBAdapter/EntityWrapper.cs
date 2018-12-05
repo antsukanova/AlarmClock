@@ -69,14 +69,14 @@ namespace AlarmClock.DBAdapter
             }
         }
         
-        public static void DeleteClock(Clock selectedClock)
+        public static void DeleteClock(Clock clock)
         {
             using (var context = new ClockDbContext())
             {
-                selectedClock.ClearReferences();
+                clock.ClearReferences();
 
-                context.Clocks.Attach(selectedClock);
-                context.Clocks.Remove(selectedClock);
+                context.Clocks.Attach(clock);
+                context.Clocks.Remove(clock);
 
                 context.SaveChanges();
             }
