@@ -32,7 +32,7 @@ namespace AlarmClock.ClockService
                 if (isInstalled)
                 {
                     var dialogResult = MessageBox.Show(
-                        $"Do You REALLY Want To Uninstall {serviceName}", "Danger",
+                        $"Do You REALLY Want To Uninstall {serviceName}?", "Danger",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning
                     );
 
