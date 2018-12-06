@@ -14,8 +14,10 @@ namespace AlarmClock.DBAdapter
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Configurations.Add(new User.UserEntityConfiguration());
-            modelBuilder.Configurations.Add(new Clock.ClockEntityConfiguration());
+            modelBuilder
+                .Configurations
+                .Add(new User.UserEntityConfiguration())
+                .Add(new Clock.ClockEntityConfiguration());
         }
     }
 }

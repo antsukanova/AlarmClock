@@ -61,10 +61,10 @@ namespace AlarmClock.ViewModels
                 {
                     user = DbManager.GetUserByLogin(Login);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    MessageBox.Show(Resources.CantGetUserError);
-                    Logger.Log(ex, Resources.CantGetUserError);
+                    MessageBox.Show(e.Message);
+                    Logger.Log(e, e.Message);
                     return false;
                 }
 
